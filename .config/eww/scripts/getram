@@ -1,0 +1,7 @@
+#!/bin/sh
+free_output=$(free -h | grep Mem)
+	# Used and total memory
+	MEMUSED=$(echo $free_output | awk '{print $3}')
+  echo "Memory used:"
+	echo $MEMUSED
+

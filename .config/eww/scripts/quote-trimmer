@@ -1,0 +1,9 @@
+#!/bin/bash
+quote=$(cat /tmp/dwm/quotes/quote)
+qc=$(cat /tmp/dwm/quotes/quote | wc -c)
+if [ "$qc" -le 58 ]; then
+	echo "" > /tmp/dwm/quotes/quote-tail
+else
+	printf '%s\n' "${quote:0:${#quote}/2}" > /tmp/dwm/quotes/quote
+	printf '%s\n' "${quote:${#quote}/2}" > /tmp/dwm/quotes/quote-tail
+fi

@@ -1,0 +1,1 @@
+On OpenBSD, be sure to edit config.mk first and remove -lrt from the $LIBS before compiling.

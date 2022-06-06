@@ -1,0 +1,137 @@
+# Don't print a new line at the start of the prompt
+format = """
+[Σ ](bold green)$directory(bold blue)$git_branch$git_status[❯](bold yellow)[❯](bold purple)[❯](bold blue) """
+add_newline = false
+
+# Make prompt a single line instead of two lines
+[line_break]
+disabled = true
+
+# Replace the "❯" symbol in the prompt with "➜"
+# [character]                         # The name of the module we are configuring is "character"
+# success_symbol = "[➜](bold green)"  # The "success_symbol" is set to "➜" with color "bold green"
+
+# Use custom format
+# format = """
+# [┌───────────────────>](bold green)
+# [│](bold green)$directory$rust$package
+# [└─>](bold green) """
+
+# Disable the package module, hiding it from the prompt completely
+
+[character]
+error_symbol = "[✗](bold red) "
+success_symbol = "[Σ](bold green)"
+vicmd_symbol = "[Σ](bold red)"
+#format = "$symbol [|](bold bright-black) "
+#success_symbol = "[ ](bold green)"
+
+
+
+[package]
+format = "[$symbol$version]($style) "
+disabled = true
+scan_timeout = 60
+add_newline = false
+symbol = " "
+
+[directory]
+style = "bold blue"
+
+[cmd_duration]
+format = "[$duration]($style) "
+
+[status]
+disabled = false
+format = "[$symbol $status]($style) "
+not_found_symbol = ""
+not_executable_symbol = ""
+sigint_symbol = "ﭦ"
+map_symbol = true
+
+[git_branch]
+format = "[$symbol$branch]($style) "
+
+[shell]
+unknown_indicator = "mystery shell"
+style = "cyan bold"
+disabled = true
+
+[python]
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+symbol = " "
+
+[lua]
+format = "[$symbol($version )]($style)"
+symbol = " "
+
+[nodejs]
+format = "[$symbol($version )]($style)"
+#symbol = ""
+
+[php]
+format = "[$symbol($version )]($style)"
+symbol = " "
+
+[java]
+format = "[${symbol}(${version} )]($style)"
+symbol = " "
+
+[rust]
+format = "[$symbol($version )]($style)"
+symbol = "🦀 "
+
+[golang]
+format = "[$symbol($version )]($style)"
+symbol = " "
+
+[c]
+format = "[$symbol($version )]($style)"
+symbol = " "
+
+[perl]
+format = "[$symbol($version )]($style)"
+symbol = " "
+
+[dart]
+format = "[$symbol($version )]($style)"
+symbol = " "
+
+[haskell]
+format = "[$symbol($version )]($style)"
+symbol = " "
+
+
+[battery]
+full_symbol = "🔋 "
+charging_symbol = "⚡️ "
+discharging_symbol = "💀 "
+
+[[battery.display]]
+threshold = 10
+style = "bold red"
+
+
+
+
+
+#Alternatively
+#add_newline = true
+
+## Use custom format
+#format="[\uE0B6 $directory\uE0B4 ](bg: cyan) $git_branch[](bg: green) "
+
+## Disable the package module, hiding it from the prompt completely
+#[package]
+#disabled = true
+
+## Remove nodejs
+#[nodejs]
+#disabled = true
+
+#[directory]
+#format = "[⯁ $path](bg:cyan fg:black bold)"
+
+#[git_branch]
+#symbol = "\ue725 "
+#format = "[\uE0B6](bg: green)[on $symbol$branch](bg:green fg:black bold)[\uE0B4](bg: green) "

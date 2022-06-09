@@ -35,6 +35,7 @@ set clipboard=unnamedplus               " Copy paste between vim and everything 
 set autochdir                           " Your working directory will always be the same as your working directory
 set exrc
 set wildmenu
+set nolist
 set secure
 set relativenumber
 set colorcolumn=110

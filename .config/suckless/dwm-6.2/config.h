@@ -121,7 +121,7 @@ static const char *const autostart[] = {
   "themechanger.sh", NULL,
   "picom", "--no-fading-openclose", NULL,
   "eww", "daemon", "&", NULL,
-  "planner", NULL,
+// "planner", NULL,
 	NULL /* terminate */
 };
 
@@ -164,6 +164,7 @@ static const Rule rules[] = {
 	{ "Gimp",	    NULL,   NULL,           0,         1,             0,           0,        -1 },
 	{ "firefox",  NULL,   NULL,           1 << 0,    0,             0,          -1,        -1 },
 	{ "St",		    NULL,   NULL,           0,         0,             1,           0,        -1 },
+	{ "Alacritty", NULL,  NULL,           0,         0,             1,           0,        -1 },
 	{ NULL,		    NULL,   "Event Tester", 0,         0,             0,           1,        -1 }, /* xev */
 	{ "Lutris",   NULL,   NULL,         1 << 1,      0,             0,           0,        -1 },
 	{ "discord",  NULL,   NULL,         1 << 3,      0,		          0,           0,        -1 },
@@ -228,7 +229,7 @@ static const char *gzdoom[]           = { "gzdoom", NULL };
 /*static const char *discord[]  = { "discord", NULL };*/
 static const char *discord[]          = { "discord_start.sh", NULL };
 static const char *passmenu[]         = { "passmenu", NULL };
-static const char *nvimcmd[]          = { "st", "-e", "nvim", NULL };
+static const char *nvimcmd[]          = { "alacritty", "-e", "nvim", NULL };
 static const char *signalmd[]         = { "signal-desktop", NULL };
 static const char *steamcmd[]         = { "steam", NULL };
 static const char *cmuscmd[]          = { "st", "-c", "ncmpcpp", NULL };

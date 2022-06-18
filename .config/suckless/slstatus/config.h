@@ -67,19 +67,21 @@ static const struct arg args[] = {
 	//{ datetime, "%s",           "%F %T" },
 	//{ wifi_perc, "W: (%3s%% on ", "wlp8s0" },
 
-   /*{ netspeed_rx, "%sB/s  ", "enp0s3" },*/
+   /*{ netspeed_rx, "%sB/s  ", "enp0s3" }, */
 /*	{ run_command, " [", NULL },*/
-	/*{ battery_perc, " %s |", "BAT1" },*/
 /*	{ separator, "%s", "[" },*/
+/*	{ separator, "%s", "[" },*/
+  {  disk_free,   "^c#1b1b1d^ %4s "        ,  "/"    }, // DO NOT DELETE, IT FIXES THE CPU BUG
+  /*{ battery_perc, " %s |", "BAT1" },*/
   { cpu_perc, "^b#1b1b1d^^c#fb4934^  ^c#fb4934^ %s%%", NULL	      }, /*funny color 4f5040*/
   /*{ cpu_perc, "^b#fb4934^^c#1b1b1d^  ^b#1b1b1d^ ^c#fb4934^ %s%%", NULL	      }, [>funny color 4f5040<]*/
   /*{ separator,           "^c#fbf1c7^|",                  NULL },*/
-  { ram_used, "^c#1b1b1d^ ^b#fabd2f^  ^c#fabd2f^ ^b#282828^ %s", NULL	      },
+  { ram_used, "^c#fabd2f^ ^b#1b1b1d^  ^c#fabd2f^ ^b#1b1b1d^ %s", NULL	      },
   /*{ separator,           "^c#fbf1c7^|",                  NULL },*/
-  { run_command, "^c#1b1b1d^ ^b#d3869b^   ^c#d3869b^^b#1b1b1d^%4s", "pamixer --get-volume" },
+  { run_command, "^c#1b1b1d^ ^b#d3869b^  ^c#a6a6a6^ ^b#282828^%4s", "pamixer --get-volume" },
   /*{ separator,           "^c#fbf1c7^|",                  NULL },*/
   /*{ separator,           "^b#1b1b1d^ ^c#83a598^",                  NULL },*/
-	{ keymap, "^c#1b1b1d^ ^b#83a598^  ^c#83a598^ ^b#1b1b1d^ %s ", " us es" },
+	{ keymap, "^c#83a598^ ^b#1b1b1d^  ^c#83a598^ ^b#1b1b1d^ %s ", " us es" },
   /*{ separator,           "^c#fbf1c7^|",                  NULL },*/
 	{ datetime, "^b#689d6a^ ^c#1b1b1d^  ^b#8ec07c^ ^c#1b1b1d^%s", "%a %b %d %r  " },
 };

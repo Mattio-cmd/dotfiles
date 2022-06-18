@@ -117,11 +117,10 @@ This are just some of the icons i may use idk
 */
 
 static const char *const autostart[] = {
-  "breakreminder.sh", NULL,
   "themechanger.sh", NULL,
   "picom", "--no-fading-openclose", NULL,
+  "dunst", "&", NULL,
   "eww", "daemon", "&", NULL,
-// "planner", NULL,
 	NULL /* terminate */
 };
 
@@ -175,7 +174,7 @@ static const Rule rules[] = {
 	{ "GZDoom",    NULL,  NULL,         1 << 1,      0,             0,           0,        -1 },
 	{ NULL, NULL, "Virtual Machine Manager",         1 << 7,      0,             0,           0,        -1 },
 	{ "Signal",   NULL,   NULL,         1 << 6,      0,             0,           0,        -1 },
-  { "cmus",     NULL,   NULL,         1 << 4,      0,             0,           0,        -1 },
+  { "ncmpcpp",     NULL,   NULL,         1 << 4,      0,             0,           0,        -1 },
   { "libreoffice", NULL, NULL,        1 << 2,      0,             0,           0,        -1 },
   { "Planner", NULL, NULL,        1 << 2,      0,             0,           0,        -1 },
   { "Heroic Games Launcher", NULL, NULL, 1 << 1,   0,             0,           0,        -1 },
@@ -209,7 +208,7 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
-static const char *eww_opensidecard[] = { "eww_opensidecard.sh", NULL };
+static const char *eww_opensidecard[] = { "eww_opensidecard", NULL };
 static const char *eww_opendashboard[] = { "eww_opendashboard.sh", NULL };
 //static const char *termcmd[]          = { "st", NULL };
 static const char *termcmd[]          = { "alacritty", NULL };
@@ -227,9 +226,9 @@ static const char *keyboar_lay[]      = { "layout_changer.sh", NULL };
 static const char *lightmd[]          = { "sh", "/home/mattio/.config/dwm-6.2/startup.sh", NULL };
 static const char *gzdoom[]           = { "gzdoom", NULL };
 /*static const char *discord[]  = { "discord", NULL };*/
-static const char *discord[]          = { "discord_start.sh", NULL };
+static const char *discord[]          = { "discord", NULL };
 static const char *passmenu[]         = { "passmenu", NULL };
-static const char *nvimcmd[]          = { "alacritty", "-e", "nvim", NULL };
+static const char *nvimcmd[]          = { "st", "-e", "nvim", NULL };
 static const char *signalmd[]         = { "signal-desktop", NULL };
 static const char *steamcmd[]         = { "steam", NULL };
 static const char *cmuscmd[]          = { "st", "-c", "ncmpcpp", NULL };
@@ -250,7 +249,7 @@ static Key keys[] = {
 	{ 0,                       XF86XK_AudioPrev, spawn, {.v = prevSong   } },
 
 	{ 0,                       XF86XK_AudioLowerVolume, spawn, {.v = downvol } },
-	{ 0,                       XF86XK_AudioMute, spawn, {.v = mutevol } },
+	{ 0,                       XF86XK_AudioMute,        spawn, {.v = mutevol } },
 	{ 0,                       XF86XK_AudioRaiseVolume, spawn, {.v = upvol   } },
 
 	/*{ 0,                       XF86XK_AudioNext, spawn, {.v = next_Notif } },*/
@@ -258,7 +257,7 @@ static Key keys[] = {
 	/*{ 0,                       XF86XK_AudioPrev, spawn, {.v = prev_Notif  } },*/
 
 	{ 0,                       XF86XK_AudioLowerVolume, spawn, {.v = get_vol } },
-	{ 0,                       XF86XK_AudioMute, spawn, {.v = get_vol } },
+	{ 0,                       XF86XK_AudioMute,        spawn, {.v = get_vol } },
 	{ 0,                       XF86XK_AudioRaiseVolume, spawn, {.v = get_vol   } },
 
 	{ MODKEY,                       XK_space,  spawn,          {.v = keyboar_lay } },

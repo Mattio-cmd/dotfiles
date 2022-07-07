@@ -117,10 +117,14 @@ This are just some of the icons i may use idk
 */
 
 static const char *const autostart[] = {
-  "themechanger.sh", NULL,
+  //"themechanger.sh", NULL,
+  "light", "-S", "30", NULL,
   "picom", "--no-fading-openclose", NULL,
   "dunst", "&", NULL,
+  "setxkbmap" "-layout" "us,es" "-variant" "qwerty" "-option" "grp:alt_space_toggle" "&", NULL,
   "eww", "daemon", "&", NULL,
+  //"nitrogen", "--set-scaled", "~/Pictures/walls/filicinofitas.jpg", NULL,
+  "nitrogen", "--restore", NULL,
 	NULL /* terminate */
 };
 
@@ -228,7 +232,7 @@ static const char *gzdoom[]           = { "gzdoom", NULL };
 /*static const char *discord[]  = { "discord", NULL };*/
 static const char *discord[]          = { "discord", NULL };
 static const char *passmenu[]         = { "passmenu", NULL };
-static const char *nvimcmd[]          = { "st", "-e", "nvim", NULL };
+static const char *nvimcmd[]          = { "alacritty", "-e", "nvim", NULL };
 static const char *signalmd[]         = { "signal-desktop", NULL };
 static const char *steamcmd[]         = { "steam", NULL };
 static const char *cmuscmd[]          = { "st", "-c", "ncmpcpp", NULL };

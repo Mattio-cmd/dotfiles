@@ -28,4 +28,4 @@
 ![theShowase2](./.images/showcase2.png)
 ![theWidgets](./.images/widgets.png)
 ![theWidgets2](./.images/widgets2.png)
-![theZsh](./.images/zsh.mp4)
+![theZsh](https://user-images.githubusercontent.com/78447457/178205967-bbd7a60a-0fc8-444d-8f94-7d9b8256832d.mp4)

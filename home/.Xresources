@@ -1,6 +1,6 @@
 ! gruvbox_material .Xresources file
 
-*background: #1b1b1d
+*background: #1a1a1a
 *foreground: #fbf1c7
 
 *color0: #1d2021
@@ -43,8 +43,11 @@ Xft.autohint:	0
 Xft.hintstyle:	hintslight
 Xft.rgba:	rgb
 Xft.lcdfilter:	lcddefault
+! dpi, i hate x some times
+Xft.dpi: 96
 
 st.font:         Iosevka Nerd Font:style:medium:pixelsize=20
 
 ! window padding
 st.borderpx: 10
+

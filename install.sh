@@ -17,5 +17,5 @@ sleep 5
 
 printf "Installing all configs to ~/.config..."
 cp home/.config/* $HOME/.config
-cp home/.bin/* $HOME/.local/bin
+cp home/.bin/shell_scripts/* $HOME/.local/bin
 cd $HOME/.config/suckless/ && cd dwm-6.2; $(DOSU) make clean install && cd ../st; $(DOSU) make clean install && cd ../slstatus; $(DOSU) make clean install && cd ../slock; $(DOSU) make clean install

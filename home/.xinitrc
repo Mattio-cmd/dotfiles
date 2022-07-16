@@ -15,7 +15,3 @@ startx
 
 # Execute dwm
 exec dwm
-
-dunst &
-eww daemon &
-

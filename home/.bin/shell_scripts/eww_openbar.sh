@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 ## CMD and DIR
 EWW="$HOME/.local/bin/eww"

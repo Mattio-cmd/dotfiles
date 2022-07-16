@@ -42,6 +42,7 @@ export STARSHIP_CONFIG=~/.config/starship.toml
 ##################
 ##    Aliases   ##
 ##################
+alias sorpresa='cc main.c;clear;./a.out'
 alias ls='exa --header'
 alias ll='exa -l --header'
 alias la='exa -l  -a --header'
@@ -49,6 +50,7 @@ alias la='exa -l  -a --header'
 #alias ls='lsd'
 #alias ll='lsd -l'
 #alias la='lsd -l  -a'
+#alias nvim='e'
 alias tree='exa -T'
 alias ctree='treefetch -xmas'
 alias aquarium='asciiquarium'
@@ -91,11 +93,8 @@ alias 'rm -rf'="rm -rf -i"
 alias cc="tcc"
 alias localip="ip route get 1 | awk '{print $7}'"
 alias wp-show="sxiv /media/games/backups/wallpapers/wallpapers"
-alias "xmr-mine"='./xmrig -o gulf.moneroocean.stream:10128 -u 4AdqumQrDrnRFqkK2tKyW6PXdDwPCtyEC4R98jAMU6Ho53kcy8aRVMbHMgpiW1V9XpDdWj4qHkjJ6FFvBHqd7sTK7raCtCU -p artgreen'
-alias "xmr-mine-support"='./xmrig --coin=XMR --donate-level=0% --cpu-max-threads-hint 100 -o pool.supportxmr.com:3333 -u 4AdqumQrDrnRFqkK2tKyW6PXdDwPCtyEC4R98jAMU6Ho53kcy8aRVMbHMgpiW1V9XpDdWj4qHkjJ6FFvBHqd7sTK7raCtCU -p artgreen'
 alias md-to-pdf="pandoc $1 -s -o out.pdf"
 #alias "v-project"='cd code_projects/js/DooT; nvim App.tsx src/components/animated-checkbox.tsx src/screens/main.tsx'
-#alias "xmr-mine-support"='./xmrig -o  -u 4AdqumQrDrnRFqkK2tKyW6PXdDwPCtyEC4R98jAMU6Ho53kcy8aRVMbHMgpiW1V9XpDdWj4qHkjJ6FFvBHqd7sTK7raCtCU -p artgreen'
 
 #For ytdl
 alias ytmp3='yt-dlp -ciw -o "%(title)s.%(ext)s" --extract-audio --audio-format mp3'

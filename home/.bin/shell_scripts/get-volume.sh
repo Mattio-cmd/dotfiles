@@ -1,3 +1,5 @@
+#! /bin/sh
+
 if [[ "`pamixer --get-mute`" == "true" ]]; then
   dunstify "Volume: Muted!" -i ~/.config/dunst/images/novolume2.png -u low -t 1000
 else

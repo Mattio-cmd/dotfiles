@@ -22,7 +22,7 @@
 *color5: #987fb8
 *color13: #938AA9
 
-*color6: #6a9578
+*color6: #83a599
 *color14: #7AA89F
 !*color14: #83a599
 
@@ -34,7 +34,7 @@
 *.alpha: 1
 
 !! Set a default font and font size as below:
-*.font: Iosevka Nerd Font:size=20
+*.font: Iosevka Nerd Font:size=21
 
 !! Character with
 Xft.antialias:	1
@@ -46,7 +46,7 @@ Xft.lcdfilter:	lcddefault
 ! dpi, i hate x some times
 Xft.dpi: 96
 
-st.font:         Iosevka Nerd Font:style:medium:pixelsize=20
+st.font:         Iosevka Nerd Font:style:medium:pixelsize=21
 
 ! window padding
 st.borderpx: 10

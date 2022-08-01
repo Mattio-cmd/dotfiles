@@ -43,9 +43,9 @@ export STARSHIP_CONFIG=~/.config/starship.toml
 ##    Aliases   ##
 ##################
 alias sorpresa='cc main.c;clear;./a.out'
-alias ls='exa --header'
-alias ll='exa -l --header'
-alias la='exa -l  -a --header'
+alias ls='exa --header --icons'
+alias ll='exa -l --header --icons'
+alias la='exa -l  -a --header --icons'
 
 #alias ls='lsd'
 #alias ll='lsd -l'
@@ -94,7 +94,7 @@ alias cc="tcc"
 alias localip="ip route get 1 | awk '{print $7}'"
 alias wp-show="sxiv /media/games/backups/wallpapers/wallpapers"
 alias md-to-pdf="pandoc $1 -s -o out.pdf"
-#alias "v-project"='cd code_projects/js/DooT; nvim App.tsx src/components/animated-checkbox.tsx src/screens/main.tsx'
+alias inciar-proyecto="touch bib.bib main.bib"
 
 #For ytdl
 alias ytmp3='yt-dlp -ciw -o "%(title)s.%(ext)s" --extract-audio --audio-format mp3'

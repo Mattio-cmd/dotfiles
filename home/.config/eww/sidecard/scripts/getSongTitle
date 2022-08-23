@@ -1,5 +1,6 @@
 #!/bin/bash
-title=$(mpc -f %title% current)
+#title=$(mpc -f %title% current)
+title=$(mpc current)
 [ -z "$title" ] && title="Nothing Playing"
 echo "$title"
 
@@ -17,5 +18,5 @@ echo "$title"
 #         else
 #             echo $(playerctl metadata --format '{{ title }}' | awk '{print $1, $2, substr($3, 1, 5)}')...
 #         fi
-#     fi 
+#     fi
 # fi

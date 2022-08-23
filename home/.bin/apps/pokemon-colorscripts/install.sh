@@ -2,8 +2,8 @@
 
 # A basic install script for pokemon-colorscripts
 
-INSTALL_DIR='/usr/local/opt'
-BIN_DIR='/usr/local/bin'
+INSTALL_DIR='~/.local/bin'
+BIN_DIR='~/.local/bin'
 
 # deleting directory if it already exists
 rm -rf $INSTALL_DIR/pokemon-colorscripts || return 1

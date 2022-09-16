@@ -20,7 +20,7 @@
 (defpoll micro :interval "1s"
     "amixer -D pulse sget Capture | grep 'Left:' | awk -F'[][]' '{ print $2 }' | tr -d '%'")
 (defpoll brightness :interval "1s"
-    "brightnessctl -m -d nvidia_0 | awk -F, '{print substr($4, 0, length($4)-1)}' | tr -d '%'")
+    "brightnessctl -m -d intel_backlight | awk -F, '{print substr($4, 0, length($4)-1)}' | tr -d '%'")
 
 ;; MUSIC PLAYER VARS
 (defpoll art :interval "5s"

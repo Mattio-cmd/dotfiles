@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-STATUS=$(nmcli | grep wlp4s0 | awk 'FNR == 1 {print $2}')
+STATUS=$(nmcli | grep wlan0 | awk 'FNR == 1 {print $2}')
 toggle() {
     if [ $STATUS == "connected" ]; then
         nmcli radio wifi off

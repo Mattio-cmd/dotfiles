@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-source "$HOME/.config/eww/Control-Center/scripts/config.zsh"
+source "$HOME/.config/eww/control-center/scripts/config.zsh"
 _set_vars
 
 mkdir "$DUNST_CACHE_DIR" 2>/dev/null
@@ -65,7 +65,7 @@ function drop() { sed -i '$d' "$DUNST_LOG" }
 
 function remove_line() { sed -i '/SL "'$1'"/d' "$DUNST_LOG" }
 
-function critical_count() { 
+function critical_count() {
   local crits=$(cat $DUNST_LOG | grep CRITICAL | wc -l)
   local total=$(cat $DUNST_LOG | wc -l)
   print $(((crits*100)/total))

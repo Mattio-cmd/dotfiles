@@ -1,3 +1,3 @@
-#! /bin/sh
-cd /home/mattio/Downloads/discord/Discord/
+#! /usr/bin/dash
+cd /home/mattio/Downloads/Discord/
 ./Discord

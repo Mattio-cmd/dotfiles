@@ -71,23 +71,24 @@ static const struct arg args[] = {
 /*	{ run_command, " [", NULL },*/
 /*	{ separator, "%s", "[" },*/
 /*	{ separator, "%s", "[" },*/
-  {  disk_free,   "^c#1b1b1d^ %4s "        ,  "/"    }, // DO NOT DELETE, IT FIXES THE CPU BUG
- // { battery_perc, "^b#1b1b1d^^c#fabd2f^ ^b#1b1b1d^^c#fabd2f^%s ", "BAT1" },
-  { cpu_perc, "^b#1b1b1d^^c#fb4934^  ^c#fb4934^ %s%%", NULL	      }, /*funny color 4f5040*/
-  /*{ cpu_perc, "^b#fb4934^^c#1b1b1d^  ^b#1b1b1d^ ^c#fb4934^ %s%%", NULL	      }, [>funny color 4f5040<]*/
+  {  disk_free,   "^c#0d0d0d^ %4s "        ,  "/"    }, // DO NOT DELETE, IT FIXES THE CPU BUG
+ // { battery_perc, "^b#0d0d0d^^c#fabd2f^ ^b#0d0d0d^^c#fabd2f^%s ", "BAT1" },
+
+//  { cpu_perc, "^b#0d0d0d^^c#d49191^  ^c#d49191^ %s%%", NULL	      }, /*funny color 4f5040*/
+  /*{ cpu_perc, "^b#fb4934^^c#0d0d0d^  ^b#0d0d0d^ ^c#fb4934^ %s%%", NULL	      }, [>funny color 4f5040<]*/
   /*{ separator,           "^c#fbf1c7^|",                  NULL },*/
-  { ram_used, "^c#fabd2f^ ^b#1b1b1d^  ^c#fabd2f^ ^b#1b1b1d^ %s", NULL	      },
+ // { ram_used, "^c#d7b788^ ^b#0d0d0d^  ^c#d7b788^ ^b#0d0d0d^ %s", NULL	      },
   /*{ separator,           "^c#fbf1c7^|",                  NULL },*/
-  { run_command, "^c#1b1b1d^ ^b#d3869b^  ^c#a6a6a6^ ^b#282828^%4s", "pamixer --get-volume" },
+  { run_command, "^c#b098c8^ ^b#0d0d0d^  ^c#b098c8^ ^b#0d0d0d^%4s", "pamixer --get-volume" },
   /*{ separator,           "^c#fbf1c7^|",                  NULL },*/
-  /*{ separator,           "^b#1b1b1d^ ^c#83a598^",                  NULL },*/
-	{ keymap, "^c#83a598^ ^b#1b1b1d^  ^c#83a598^ ^b#1b1b1d^ %s ", " us es" },
+  /*{ separator,           "^b#0d0d0d^ ^c#83a598^",                  NULL },*/
+	{ keymap, "^c#83a598^ ^b#0d0d0d^  ^c#83a598^ ^b#0d0d0d^ %s ", " us es" },
   /*{ separator,           "^c#fbf1c7^|",                  NULL },*/
-	{ datetime, "^b#689d6a^ ^c#1b1b1d^  ^b#8ec07c^ ^c#1b1b1d^%s", "%a %b %d %r  " },
+	{ datetime, "^b#689d6a^ ^c#0d0d0d^  ^b#8ec07c^ ^c#0d0d0d^%s", "%a %b %d %r  " },
 };
 
   /*{ separator,           "^c#458588^",                  NULL },*/
-	/*{ datetime, "^b#689d6a^ ^c#1b1b1d^  ^b#8ec07c^ ^c#1b1b1d^%s",           "%a %b %d %r" },*/
+	/*{ datetime, "^b#689d6a^ ^c#0d0d0d^  ^b#8ec07c^ ^c#0d0d0d^%s",           "%a %b %d %r" },*/
   /*{ cpu_perc, "^c#8ec07c^   %s%% ", NULL	      },*/
   /*{ separator,           "^c#fbf1c7^|",                  NULL },*/
   /*{ ram_used, "^c#cc241d^   %s ", NULL	      }, [><]*/

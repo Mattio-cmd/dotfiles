@@ -1,6 +1,6 @@
 ! gruvbox_material .Xresources file
 
-*background: #1a1a1a
+*background: #0d0d0d
 *foreground: #fbf1c7
 
 *color0: #1d2021
@@ -30,11 +30,12 @@
 *color15: #dcd7ba
 
 !! Transparency (0-1):
-!*.alpha: 0.825
-*.alpha: 1
+!*.alpha: 0.95
+*.alpha: 0.96
 
 !! Set a default font and font size as below:
-*.font: Iosevka Nerd Font:size=21
+!*.font: Iosevka Nerd Font:size=21
+*.font: JetBrainsMono Nerd Font:size=21
 
 !! Character with
 Xft.antialias:	1
@@ -45,9 +46,10 @@ Xft.rgba:	rgb
 Xft.lcdfilter:	lcddefault
 ! dpi, i hate x some times
 Xft.dpi: 96
+!Xft.dpi: 60
 
 st.font:         Iosevka Nerd Font:style:medium:pixelsize=21
+!st.font:         Monocraft:style:medium:pixelsize=12
 
 ! window padding
-st.borderpx: 10
-
+st.borderpx: 15

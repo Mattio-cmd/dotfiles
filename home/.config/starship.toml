@@ -1,6 +1,6 @@
 # Don't print a new line at the start of the prompt
 format = """
-[Σ ](bold green)$directory(bold blue)$git_branch$git_status(bold green)$rust$c$python$nodejs$go$haskell$dart$perl$java$php$lua[❯](bold yellow)[❯](bold purple)[❯](bold blue) """
+[Σ ](bold green)$directory(bold blue)$git_branch$git_status(bold green)$rust$c$python$nodejs$go$haskell$dart$perl$java$php$lua[❯](bold yellow)[❯](bold purple)[❯](bold blue) $cmd_duration """
 add_newline = false
 
 # Make prompt a single line instead of two lines

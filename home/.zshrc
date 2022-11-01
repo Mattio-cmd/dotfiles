@@ -17,8 +17,11 @@ export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME"/java
 export WORKON_HOME="$XDG_DATA_HOME/virtualenvs"
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/.pass
 export WINEPREFIX="$XDG_DATA_HOME"/.wine
+export PATH=$HOME/.config/rofi/scripts:$PATH
+
 #export XINITRC="$XDG_CONFIG_HOME"/X11/.xinitrc
 #export XAUTHORITY="$XDG_STATE_HOME"/.Xauthority
+
 
 alias monerod=monerod --data-dir "$XDG_DATA_HOME"/.bitmonero
 alias dosbox=dosbox -conf "$XDG_CONFIG_HOME"/.dosbox/dosbox.conf
@@ -51,6 +54,8 @@ alias la='exa -l  -a --header --icons'
 #alias ll='lsd -l'
 #alias la='lsd -l  -a'
 #alias nvim='e'
+alias university='cd ~/Documents/vacaciones_2022 && exa -l --header --icons'
+alias learnhaskell='cd ~/Documents/vacaciones_2022/Calculus/haskell && zathura learnyouahaskell.pdf'
 alias tree='exa -T'
 alias ctree='treefetch -xmas'
 alias aquarium='asciiquarium'
@@ -89,12 +94,17 @@ alias "pallet-gruv"='sxiv Downloads/colorscheme/gruvbox_pallet.png'
 alias "movies-now"='cd $HOME/videos/movies'
 alias "shred"='shred -f -z -n 3'
 alias rm="rm -i"
-alias 'rm -rf'="rm -rf -i"
+alias "rm -rf"='rm -rf -i'
 alias cc="tcc"
 alias localip="ip route get 1 | awk '{print $7}'"
 alias wp-show="sxiv /media/games/backups/wallpapers/wallpapers"
 alias md-to-pdf="pandoc $1 -s -o out.pdf"
 alias inciar-proyecto="touch bib.bib main.bib"
+alias  webserver="pushd &lt;$1.html; python3 -m http.server 9999; popd;"
+alias livewp=" xwinwrap -ov -g 1920x1080+0+0 -- mpv -wid WID ~/Pictures/walls/mp4/Dots-Wave-.mp4 --no-osc --no-osd-bar --loop-file --player-operation-mode=cplayer
+--no-audio --panscan=1.0 --no-input-default-bindings"
+
+alias record-mic="ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f pulse -ac 2 -i default salida.mp4"
 
 #For ytdl
 alias ytmp3='yt-dlp -ciw -o "%(title)s.%(ext)s" --extract-audio --audio-format mp3'

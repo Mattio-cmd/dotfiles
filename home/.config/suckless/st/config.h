@@ -5,8 +5,8 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "Iosevka Nerd Font :pixelsize=14:antialias=true:autohint=true";
-static char *font2[] = { "Iosevka Nerd Font :pixelsize=14:antialias=true:autohint=true", "Source Han Sans JP Medium:pixelsize=16:antialias=true:autohint=true" };
+static char *font = "Iosevka Nerd Font:pixelsize=20:antialias=true:autohint=true";
+static char *font2[] = { "JoyPixels:pixelsize=10:antialias=true:autohint=true", "Iosevka Nerd Font :pixelsize=14:antialias=true:autohint=true", "Source Han Sans JP Medium:pixelsize=16:antialias=true:autohint=true" };
 static int borderpx = 15;
 
 /*
@@ -114,7 +114,7 @@ char *termname = "st-256color";
 unsigned int tabspaces = 8;
 
 /* bg opacity */
-float alpha = 1.0;
+float alpha = 1;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {

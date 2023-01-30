@@ -1,0 +1,9 @@
+#! /bin/sh
+
+hyprpaper ctl hypraper Pictures/walls/filicinofitas.jpg &
+waybar &
+dunst &
+mpd &
+eww daemon &
+pipewire-pulse &
+pcmanfm -daemon-mode &

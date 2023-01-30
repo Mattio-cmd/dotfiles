@@ -85,7 +85,8 @@ alias lunarc='prime-run ~/Downloads/lunarclient/lunarclient'
 alias v='nvim'
 alias cr='cargo run'
 alias sx='startx'
-alias minecraft-run='prime-run java -jar /home/mattio/Downloads/mc/TLauncher-2.83.jar'
+#alias minecraft-run='prime-run java -jar /home/mattio/Downloads/mc/TLauncher-2.83.jar'
+alias minecraft-run='prime-run minecraft-launcher'
 alias pacfetch='neofetch --ascii_distro PacBSD'
 alias gentoo='strat -r gentoo'
 alias emerge='strat -r gentoo emerge'
@@ -104,6 +105,7 @@ alias inciar-proyecto="touch bib.bib main.bib"
 alias  webserver="pushd &lt;$1.html; python3 -m http.server 9999; popd;"
 alias livewp=" xwinwrap -ov -g 1920x1080+0+0 -- mpv -wid WID ~/Pictures/walls/mp4/Dots-Wave-.mp4 --no-osc --no-osd-bar --loop-file --player-operation-mode=cplayer
 --no-audio --panscan=1.0 --no-input-default-bindings"
+alias money="cd Documents/HU2;pcmanfm"
 
 alias record-mic="ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f pulse -ac 2 -i default salida.mp4"
 

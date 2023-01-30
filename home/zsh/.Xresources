@@ -31,11 +31,11 @@
 
 !! Transparency (0-1):
 !*.alpha: 0.95
-*.alpha: 0.96
+*.alpha: 0.90
 
 !! Set a default font and font size as below:
 !*.font: Iosevka Nerd Font:size=21
-*.font: JetBrainsMono Nerd Font:size=21
+*.font: Iosevka Nerd Font:size=21
 
 !! Character with
 Xft.antialias:	1
@@ -45,10 +45,11 @@ Xft.hintstyle:	hintslight
 Xft.rgba:	rgb
 Xft.lcdfilter:	lcddefault
 ! dpi, i hate x some times
-Xft.dpi: 96
+Xft.dpi: 92
 !Xft.dpi: 60
 
 st.font:         Iosevka Nerd Font:style:medium:pixelsize=21
+!st.font:         FantasqueSansMono Nerd Font:style:medium:pixelsize=21
 !st.font:         Monocraft:style:medium:pixelsize=12
 
 ! window padding

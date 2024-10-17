@@ -85,9 +85,9 @@ static const struct arg args[] = {
 
   /*{ separator,           "^c#fbf1c7^|",                  NULL },*/
   /*{ separator,           "^b#000000^ ^c#83a598^",                  NULL },*/
-//KEYBOARD	{ keymap, "^c#83a598^ ^b#000000^  ^c#83a598^ ^b#000000^ %s ", " us es" },
+{ keymap, "^c#83a598^ ^b#000000^  ^c#83a598^ ^b#000000^ %s ", "it us es" },
   /*{ separator,           "^c#fbf1c7^|",                  NULL },*/
-	{ datetime, "^b#000000^ ^c#879C78^  ^b#000000^ ^c#879C78^%s", "%a %b %d %r  " },
+	{ datetime, "^b#000000^ ^c#87ceeb^  ^b#000000^ ^c#87ceeb^%s", "%a %b %d %H:%M:%S  " }, //"%a %b %d %H:%M:%S
 };
 
   /*{ separator,           "^c#458588^",                  NULL },*/

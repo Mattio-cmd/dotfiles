@@ -1,10 +1,12 @@
 # This is a WIP
 
+The main focus of this dotfiles is X11, but I also added my hyprland and waybar configs.
+
 ### Configs
 - Currently has configs of:
 
-- [ ] dwm, check out my other [repository](https://github.com/Mattio-cmd/dwm-clean) for just dwm
 - [ ] nvim, check out [this](https://github.com/Mattio-cmd/SigmaNvim) amazing repository
+- [x] dwm
 - [x] st
 - [x] slstatus
 - [x] dmenu

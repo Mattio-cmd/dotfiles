@@ -8,6 +8,7 @@
 # Blocked websites n stuff
 #0.0.0.0 	www.reddit.com
 #0.0.0.0 	www.youtube.com
+#0.0.0.0 x.com
 
 # From https://github.com/StevenBlack/hosts
 # This should block all malware and nasty sites on the web :)

@@ -1,7 +1,7 @@
 #! /bin/sh
 
 if (( $EUID == 0 )); then
-    echo "ERROR, script cant be run as root"
+    echo "ERROR, script can't be run as root"
     exit
 fi
 

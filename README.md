@@ -3,7 +3,7 @@
 ### Configs
 - Currently has configs of:
 
-- [] dwm (check my other [repository](github.com/Mattio-cmd/dwm-clean))
+- [ ] dwm, check out my other [repository](https://github.com/Mattio-cmd/dwm-clean) for just dwm
 - [ ] nvim, check out [this](https://github.com/Mattio-cmd/SigmaNvim) amazing repository
 - [x] st
 - [x] slstatus

@@ -12,8 +12,9 @@ printf "This is script is probably going to override old configs, so make sure t
 printf "control+c to safely quit the script if you haven donde so yet\n"
 sleep 6
 
-printf "The /etc files wont be installed as they are kind of personal and can get in your way.\n"
-sleep 5
+printf "The script will now copy X related stuff"
+cp etc/X11/.xinitrc etc/X11/.Xresources $HOME
+cp home/.themes $HOME && cp home/.icons $HOME
 
 printf "Installing all configs to ~/.config..."
 cp home/.config/* $HOME/.config

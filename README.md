@@ -2,6 +2,8 @@
 
 The main focus of this dotfiles is X11, but I also added my hyprland and waybar configs.
 
+Keep in mind that hyprland is configured for my two monitor set-up, so you might need to change that.
+
 ### Configs
 - Currently has configs of:
 

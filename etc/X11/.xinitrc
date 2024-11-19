@@ -1,95 +1,33 @@
-#!/usr/bin/dash
-export _JAVA_AWT_WM_NONREPARENTING=1
+#!/bin/sh
 
-userresources=$HOME/.config/xorg-related/.Xresources
-usermodmap=$HOME/.config/xorg-related/.Xmodmap
+userresources=$HOME/.config/X11/.Xresources
+usermodmap=$HOME/.config/X11/.Xmodmap
 sysresources=/etc/X11/xinit/.Xresources
 sysmodmap=/etc/X11/xinit/.Xmodmap
 
-# merge in defaults and keymaps
-
-if [ -f $sysresources ]; then
-
-
-
-
-
-
-
-    xrdb -merge $sysresources
-
+if [ -f $userresources ]; then
+    xrdb -merge $userresources
 fi
 
 if [ -f $sysmodmap ]; then
     xmodmap $sysmodmap
 fi
 
-if [ -f "$userresources" ]; then
-
-
-
-
-
-
-
-    xrdb -merge "$userresources"
-
-fi
-
-if [ -f "$usermodmap" ]; then
-    xmodmap "$usermodmap"
-fi
-
-# start some nice programs
-
-if [ -d /etc/X11/xinit/xinitrc.d ] ; then
- for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
-  [ -x "$f" ] && . "$f"
- done
- unset f
-fi
-
-
 # Keyboar toggle
-setxkbmap -layout us,es -variant qwerty -option "grp:alt_space_toggle" &
-
-# slstatus
-slstatus &
-
-
-# Wallpaper
-#nitrogen --restore &
-
-# for dunst
 dunst &
+setxkbmap -layout us,it -variant qwerty -option "grp:alt_space_toggle" &
+slstatus &
+sh pipewire_start.sh &
+nitrogen --restore &
+picom --no-fading-openclose &
+mpd &
+xrandr --output HDMI-1-0 --mode 1920x1080 --rate 100.00 --left-of eDP-1
 
 # Loop
 while true; do
    dwm>/dev/null 2>&1
 done
-# xlock
-xautolock -time 10 -locker slock &
 
-# Startx
-startx
-
-# Start qtile
-#qtile
 
 # Execute dwm
 exec dwm
-
-dunst &
-eww daemon &
-
-
-
-pcmanfm -daemon-mode &
-
-
-
-# Compositor #picom
-#Network Manager Applet #nm-applet &
-#
-#ratbagctl 'Glorious Model O' rate set 300
-

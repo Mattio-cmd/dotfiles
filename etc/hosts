@@ -8,7 +8,7 @@
 # Blocked websites n stuff
 #0.0.0.0 	www.reddit.com
 #0.0.0.0 	www.youtube.com
-#0.0.0.0 x.com
+#0.0.0.0		x.com
 
 # From https://github.com/StevenBlack/hosts
 # This should block all malware and nasty sites on the web :)
@@ -36,7 +36,7 @@
 # Disgusting social media & stupid liberal websites
 0.0.0.0		www.twitch.com
 0.0.0.0		www.twitter.com
-0.0.0.0		www.instagram.com
+#0.0.0.0		www.instagram.com
 #0.0.0.0		www.facebook.com
 0.0.0.0 mvconf.f.360.cn
 0.0.0.0 care.help.360.cn
@@ -70693,7 +70693,6 @@
 0.0.0.0 in4.zog.link
 0.0.0.0 cdn1.zopiny.com
 # [Cloudflare][AS13335][108.162.192.0 - 108.162.255.255]
-0.0.0.0 adfoc.us
 0.0.0.0 img.avatraffic.com
 # [Cloudflare][AS13335][141.101.112.0 - 141.101.119.255]
 # 0.0.0.0 js.maxmind.com #[affects marchon.com / directvnow.com]
@@ -84784,6 +84783,7 @@
 0.0.0.0 verify-app.online
 0.0.0.0 videosdownload.co
 0.0.0.0 videotubbe.net
+#0.0.0.0 looksmax.org
 0.0.0.0 vider-image.com
 0.0.0.0 vie-en-islam.com
 0.0.0.0 viedechretien.org

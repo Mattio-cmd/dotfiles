@@ -72,7 +72,7 @@ static const struct arg args[] = {
 /*	{ separator, "%s", "[" },*/
 /*	{ separator, "%s", "[" },*/
   {  disk_free,   "^c#000000^ %4s "        ,  "/"    }, // DO NOT DELETE, IT FIXES THE CPU BUG
-//  { battery_perc, "^b#000000^^c#fabd2f^ ^b#000000^^c#fabd2f^%s ", "BAT1" },
+  { battery_perc, "^b#000000^^c#fabd2f^  ^b#000000^^c#fabd2f^%s ", "BAT1" },
 
 //  { cpu_perc, "^b#000000^^c#d49191^  ^c#d49191^ %s%%", NULL	      }, /*funny color 4f5040*/
   /*{ cpu_perc, "^b#cc241d^^c#000000^  ^b#000000^ ^c#cc241d^ %s%%", NULL	      }, [>funny color 4f5040<]*/

@@ -1,0 +1,37 @@
+sw_volume: 70
+audio_device_state:1:mpd alsamixer-output
+state: pause
+current: 21
+time: 22.184000
+random: 1
+repeat: 1
+single: 0
+consume: 0
+crossfade: 0
+mixrampdb: 0.000000
+mixrampdelay: -1.000000
+playlist_begin
+0:DVRST - Dream Space.mp3
+1:El Paso.mp3
+2:Ezekiel - help_urself (boosted).mp3
+3:gravechill - twilight ⧸⧸ slowed down + reverb.mp3
+4:I Still Can't Sleep _ The Cannot Touch Her (Betsy's Theme).mp3
+5:iamjakehill - By the Sword.mp3
+6:jinglejanglejingle.mp3
+7:lone_star.mp3
+8:Luci4 - BodyPartz (slowed).mp3
+9:MC ORSEN - WARNING (Sped Up) (Music Video).mp3
+10:METAMORPHOSIS (Slowed + Reverb).mp3
+11:oneheart_x_reidenshi_snowfall_slowed.mp3
+12:SHADXWBXRN, ARCHEZ, KXNVRA - PRINCE OF DARKNESS.mp3
+13:Sigma Male Grindset - Slowed Version.mp4
+14:tell_em.mp3
+15:w1nkyyy - Japan Aura ｜｜ slowed + reverb.mp3
+16:KUTE - AVOID ME (Music Video).mp3
+17:Mobb Deep - Shook Ones, Pt. II INSTRUMENTAL  slowed.mp3
+18:Override (Sped up).mp3
+19:Prolly my spookiest beat - ( super slowed ).mp3
+20:FNV/Radio New Vegas - Blue Moon (Frank Sinatra).mp3
+21:FNV/Fallout New Vegas Radio - Something Gotta Give.mp3
+22:FNV/Fallout New Vegas Radio - Aint that a kick in the head.mp3
+playlist_end

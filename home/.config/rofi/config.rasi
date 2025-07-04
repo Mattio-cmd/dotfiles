@@ -1,0 +1,8 @@
+configuration {
+  modi: "run,drun,window,ssh,combi";
+	display-run: "Run";
+	display-drun: "Apps";
+	sidebar-mode: true;
+}
+
+@theme	"~/.config/rofi/themes/theme.rasi"

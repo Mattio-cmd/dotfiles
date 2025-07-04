@@ -1,0 +1,36 @@
+! gruvbox_material .Xresources file
+
+*background: #1b1b1d
+*foreground: #fbf1c7
+
+*color0: #282828
+*color8: #a89984
+
+*color1: #d71a1a
+*color9: #c34043
+
+*color2: #8ec07c
+*color10: #8cc37c
+
+! *color3: #FFA066
+*color3: #d79921
+*color11: #fabd2f
+
+*color4: #458588
+*color12: #83a598
+
+*color5: #cf73e6
+*color13: #b77ee0
+
+*color6: #9ec3c4
+*color14: #bccec8
+!*color14: #83a599
+
+*color7: #dedede
+*color15: #EEEEEE
+
+!! Transparency (0-1):
+*.alpha: 0.885
+
+!! Set a default font and font size as below:
+*.font: Iosevka Nerd Font:size=19

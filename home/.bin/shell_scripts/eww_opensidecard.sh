@@ -1,0 +1,8 @@
+#!/bin/sh
+
+## CMD and DIR
+EWW="/usr/bin/eww"
+DIR="$HOME/.config/eww/sidecard"
+
+## Run eww daemon if not running already
+${EWW} -c ${DIR} open --toggle dashboard

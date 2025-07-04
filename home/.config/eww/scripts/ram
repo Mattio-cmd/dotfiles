@@ -1,0 +1,4 @@
+#! /bin/sh
+free_output=$(free -h | grep Mem)
+	MEMUSED=$(echo $free_output | awk '{print $3}')
+	echo $MEMUSED

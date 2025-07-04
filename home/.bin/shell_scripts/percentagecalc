@@ -1,0 +1,29 @@
+#!/usr/bin/python
+
+import sys
+
+def american_to_percentage(odds):
+    # Handle negative odds
+    if odds < 0:
+        return round(abs(odds) / (abs(odds) + 100) * 100, 2)
+    # Handle positive odds
+    elif odds > 0:
+        return round(100 / (odds + 100) * 100, 2)
+    else:
+        raise ValueError("Odds cannot be zero.")
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python odds_to_percentage.py <odds>")
+        sys.exit(1)
+
+    try:
+        odds = int(sys.argv[1])
+        probability = american_to_percentage(odds)
+        print(f"The implied probability of {odds} odds is {probability}%")
+    except ValueError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

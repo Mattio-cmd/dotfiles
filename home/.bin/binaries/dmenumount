@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Prompt for the mount point
+MOUNT_POINT=$(echo "$HOME/mnt" | dmenu -p "Enter mount point:")
+
+# Exit if no mount point was provided
+if [ -z "$MOUNT_POINT" ]; then
+    dunstify "No mount point entered" "Please enter a mount point."
+    exit 1
+fi
+
+# Create the mount point directory if it doesn't exist
+mkdir -p "$MOUNT_POINT"
+
+# Get a list of available MTP devices
+DEVICE=$(simple-mtpfs -l | dmenu -p "Select MTP device:")
+
+# Check if a device was selected
+if [ -z "$DEVICE" ]; then
+    dunstify "No device selected" "Please select an MTP device."
+    exit 1
+fi
+
+# Extract the device identifier if necessary
+# For Android, this might be something like `MTP device 1` or similar
+# Make sure the DEVICE string matches what simple-mtpfs expects
+
+# Mount the selected device
+simple-mtpfs -o allow_other "$DEVICE" "$MOUNT_POINT"
+
+# Check if mounting was successful
+if [ $? -eq 0 ]; then
+    dunstify "MTP Device Mounted" "The device has been mounted at $MOUNT_POINT."
+else
+    dunstify "Mount Failed" "Failed to mount the device."
+fi
+

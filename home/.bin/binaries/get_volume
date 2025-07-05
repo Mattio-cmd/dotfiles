@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Get the current volume of the default sink in PipeWire (using pactl)
+volume=$(pactl list sinks | grep -A 10 "State: RUNNING" | grep 'Volume' | head -n 1)
+
+# Extract the percentage (it should be in the format 'Volume: front-left: <value> / <percent> / <dB>')
+volume_percentage=$(echo $volume | sed -n 's/.*front-left: [0-9]* \/ \([0-9]*%\) \/ .*/\1/p')
+
+# Check if we successfully extracted the volume percentage
+if [ -z "$volume_percentage" ]; then
+  dunstify "Error" "Failed to retrieve volume."
+else
+  # Send the volume percentage to dunst
+  dunstify "Volume" "$volume_percentage"
+fi

@@ -13,13 +13,12 @@ Keep in mind that hyprland is configured for my two monitor set-up, so you might
 - [x] slstatus
 - [x] dmenu
 - [x] slock
-- [x] hyprland
-- [x] alacritty
+- [ ] hyprland
+- [ ] alacritty
 - [x] starship
 - [x] zsh
 - [x] hosts file
 - [x] some fetch tools and their configs
-- [x] rose browser
 - [x] picom (jonasburg for)
 - [x] dunst
 - [x] some X related stuff (xinitrc and Xressources)
@@ -29,11 +28,12 @@ Keep in mind that hyprland is configured for my two monitor set-up, so you might
 
 ## Showcase
 
-![theShowcase](./.images/showcase.png)
-![theShowase2](./.images/showcase2.png)
-![theWidgets](./.images/widgets.png)
-![theWidgets2](./.images/widgets2.png)
-![theZsh](https://user-images.githubusercontent.com/78447457/178205967-bbd7a60a-0fc8-444d-8f94-7d9b8256832d.mp4)
+Obsolete, WIP
+<!--![theShowcase](./.images/showcase.png)-->
+<!--![theShowase2](./.images/showcase2.png)-->
+<!--![theWidgets](./.images/widgets.png)-->
+<!--![theWidgets2](./.images/widgets2.png)-->
+<!--![theZsh](https://user-images.githubusercontent.com/78447457/178205967-bbd7a60a-0fc8-444d-8f94-7d9b8256832d.mp4)-->
 
 ## Installation
 

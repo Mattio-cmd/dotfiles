@@ -8,6 +8,9 @@ export HISTFILE="${XDG_STATE_HOME}"/bash/history
 export GTK_THEME="Mojave-dark"
 export GTK_ICON_THEME="sakura"
 
+export QT_QPA_PLATFORMTHEME=qt6ct
+export QT_STYLE_OVERRIDE=kvantum
+
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
@@ -104,11 +107,9 @@ alias reboot='doas reboot'
 #alias heroic='prime-run heroic'
 alias mpv='mpv --keep-open'
 alias mov='cd /media/games/movies'
-alias rdr2='light -S 100; killall picom; killall themechnger.sh; killall breakreminder.sh; killall java; xrandr -s 1280x720; steam'
-alias lunarc='prime-run ~/Downloads/mc/lunarclient/lunarclient'
 alias v='nvim'
-alias cr='cargo run'
 alias sx='startx'
+alias virt-manager='GTK_THEME=Mojave-Dark virt-manager'
 #alias minecraft-run='prime-run java -jar /home/mattio/Downloads/mc/TLauncher-2.83.jar'
 #alias minecraft-run='prime-run minecraft-launcher'
 alias pacfetch='neofetch --ascii_distro PacBSD'

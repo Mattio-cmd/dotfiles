@@ -8,6 +8,8 @@ export HISTFILE="${XDG_STATE_HOME}"/bash/history
 export GTK_THEME="Mojave-dark"
 export GTK_ICON_THEME="sakura"
 
+#source /opt/oss-cad-suite/environment
+
 export QT_QPA_PLATFORMTHEME=qt6ct
 export QT_STYLE_OVERRIDE=kvantum
 
@@ -36,12 +38,10 @@ export WINEPREFIX="$XDG_DATA_HOME"/.wine
 export PATH=$HOME/.config/rofi/scripts:$PATH
 
 export QT_STYLE_OVERRIDE=Fusion
-#export QT_STYLE_OVERRIDE=Windows
 
 
 export XINITRC="$XDG_CONFIG_HOME"/X11/.xinitrc
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
-#export XAUTHORITY="$XDG_STATE_HOME"/.Xauthority
 
 
 alias monerod=monerod --data-dir "$XDG_DATA_HOME"/.bitmonero
@@ -75,23 +75,19 @@ alias ls='exa --header --icons'
 alias ll='exa -l --header --icons'
 alias la='exa -l  -a --header --icons'
 
+alias oss-cad_start='source /opt/oss-cad-suite/environment'
+
 alias tec='cd /home/mattio/Documents/universidad/TEC/2025/Semestre\ II && exa -l --header'
-alias university='cd ~/Documents/vacaciones_2022 && exa -l --header --icons'
-alias ucr='cd /home/mattio/Documents/universidad/UCR/2024/Semestre\ I && exa -l --header --icons'
-alias learnhaskell='cd ~/Documents/vacaciones_2022/Calculus/haskell && zathura learnyouahaskell.pdf'
 alias tree='exa -T'
-alias ctree='treefetch -xmas'
+alias ctree='treefetch --xmas'
 alias aquarium='asciiquarium'
-alias batterperc='cat /sys/class/power_supply/BAT1/capacity'
 alias cat='bat --theme gruvbox-dark'
 alias du='dust'
 alias df='duf'
-#alias rg='ripgrep'
 alias sxiv='nsxiv -b'
 alias anki='setxkbmap us; anki; setxkbmap -layout us,it,es -variant qwerty -option "grp:alt_space_toggle" &'
 alias haxorman='unimatrix -s 96 -c green'
 alias glow="glow --tui"
-alias nederlands='cd ~/Documents/Lang\ Books/Nederlands'
 alias "dmki"='doas make clean install'
 alias gits='git status'
 alias gitp='git push'
@@ -100,39 +96,23 @@ alias gitco='git commit'
 alias gitcl='git clone'
 alias weather='curl wttr.in'
 alias py='python'
-alias fa='falion'
 alias e='exit'
 alias shutdown='doas shutdown -h now'
 alias reboot='doas reboot'
-#alias heroic='prime-run heroic'
 alias mpv='mpv --keep-open'
 alias mov='cd /media/games/movies'
 alias v='nvim'
 alias sx='startx'
 alias virt-manager='GTK_THEME=Mojave-Dark virt-manager'
-#alias minecraft-run='prime-run java -jar /home/mattio/Downloads/mc/TLauncher-2.83.jar'
-#alias minecraft-run='prime-run minecraft-launcher'
 alias pacfetch='neofetch --ascii_distro PacBSD'
-alias gentoo='strat -r gentoo'
-alias emerge='strat -r gentoo emerge'
-alias gneofetch='strat -r gentoo neofetch'
-alias "cd gentoo"='cd /bedrock/strata/gentoo/home/mattio'
-alias "pallet-gruv"='sxiv -b Downloads/colorscheme/gruvbox_pallet.png'
-alias "movies-now"='cd $HOME/videos/movies'
 alias "shred"='shred -f -z -n 3'
 alias rm="rm -i"
 alias "rm -rf"='rm -rf -i'
 alias localip="ip route get 1 | awk '{print $7}'"
-alias wp-show="sxiv /media/games/backups/wallpapers/wallpapers"
-alias wp-dir="cd /media/games/backups/wallpapers/wallpapers;ll"
+alias wp-show="sxiv /media/games/wallpapers/wallpapers"
 alias md2pdf="pandoc $1 -s -o out.pdf"
-alias inciar-proyecto="touch bib.bib main.bib"
-alias  webserver="pushd &lt;$1.html; python3 -m http.server 9999; popd;"
-alias livewp=" xwinwrap -ov -g 1920x1080+0+0 -- mpv -wid WID ~/Pictures/walls/mp4/Dots-Wave-.mp4 --no-osc --no-osd-bar --loop-file --player-operation-mode=cplayer
---no-audio --panscan=1.0 --no-input-default-bindings"
-alias money="cd /home/mattio/Documents/The\ grind\ never\ stops/HU2/"
-alias lang="cd Documents/Lang\ Books; clear; ll"
-alias R="R --quiet"
+alias money="cd $HOME/Documents/The\ grind\ never\ stops/HU2/"
+alias lang="cd $HOME/Documents/Lang\ Books; clear; ll"
 
 alias record-mic="ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f pulse -ac 2 -i default salida.mp4"
 
@@ -166,14 +146,6 @@ PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magent
 HISTSIZE=10000
 SAVEHIST=10000
 HISTFILE=~/.cache/zsh/history
-
-
-### For compilation of journal
-journal_compile() {
-    pdflatex -output-directory=LaTeX_output "$1"
-    moveALLpdfs.py $2 $3
-}
-
 
 latex+biber_compile() {
   pdflatex "$1"

@@ -1,10 +1,10 @@
-Some C games 
-============= 
+Some C games
+=============
 by [Joan Alba Maldonado](https://joanalbamaldonado.com/) (joanalbamaldonadoNO_SPAM_PLEASE AT gmail DOT com, without NO_SPAM_PLEASE)
 
 Some simple games written in C language.
 
-Version: different versions 
+Version: different versions
 - Date: 2006 to 2007.
 
 

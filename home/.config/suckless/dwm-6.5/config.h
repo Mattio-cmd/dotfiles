@@ -66,12 +66,15 @@ static const Rule rules[] = {
 	{ "GZDoom",    NULL,  NULL,         1 << 1,      0,             0,           0,        -1 },
 	{ NULL, NULL, "Virtual Machine Manager",         1 << 7,      0,             0,           0,        -1 },
 	{ "Signal",   NULL,   NULL,         1 << 6,      0,             0,           0,        -1 },
+	{ "Syncthing GTK",   NULL,   NULL,         1 << 2,      0,             0,           0,        -1 },
 	{ "telegram-desktop",   NULL,   NULL,         1 << 4,      0,             0,           0,        -1 },
 	{ "TelegramDesktop",   NULL,   NULL,         1 << 4,      0,             0,           0,        -1 },
   { "minecraft-launcher",     NULL,   NULL,         1 << 1,      0,             0,           0,        -1 },
   { "libreoffice", NULL, NULL,        1 << 2,      0,             0,           0,        -1 },
   { "qbittorrent", NULL, NULL,        1 << 2,      0,             0,           0,        -1 },
   { "Heroic Games Launcher", NULL, NULL, 1 << 1,   0,             0,           0,        -1 },
+  { "ollama-float",          NULL, NULL, 0, 1, 0, 0, -1 },
+
 };
 
 /* layout(s) */
@@ -106,7 +109,7 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *librewmd[]         = { "librewolf", NULL };
 static const char *pcmanfmmd[]        = { "pcmanfm", NULL };
 static const char *libreofficemd[]    = { "libreoffice", "--nologo", NULL };
-static const char *screenshotmd[]     = { "xfce4-screenshooter", "-r", NULL };
+static const char *screenshotmd[]     = { "flameshot", "gui", NULL };
 static const char *obsmd[]            = { "obs", NULL };
 static const char *virtmanager[]      = { "virt-manager", NULL };
 static const char *slockmd[]          = { "slock", NULL };
@@ -119,6 +122,8 @@ static const char *gzdoom[]           = { "prime-run", "gzdoom", NULL };
 static const char *discord[]          = { "discord", NULL };
 static const char *steamcmd[]         = { "steam", NULL };
 static const char *nvidia[]           = { "nvidia-settings", NULL };
+static const char *assist_ollama[]    = { "assist_ollama.sh", NULL };
+static const char *syncthing[]        = { "syncthing-gtk", NULL };
 
 static const char *greek[]            = { "greekleters.sh", NULL };
 
@@ -153,11 +158,7 @@ static Key keys[] = {
 	/* modifier                     key        function        argument */
 
   // For light
-  { 0,                       XK_F2, spawn, {.v = light_down } },
-	/*{ 0,                       XK_F2, spawn, {.v = get_light } },*/
 
-  { 0,                       XK_F3, spawn, {.v = light_up } },
-	/*{ 0,                       XK_F3, spawn, {.v = get_light } },*/
 
 	{ 0,                       XF86XK_AudioNext, spawn, {.v = nextSong } },
 	{ 0,                       XF86XK_AudioPlay, spawn, {.v = pauseSong } },
@@ -202,6 +203,8 @@ static Key keys[] = {
 	//{ MODKEY|ShiftMask,             XK_z,  spawn,          		 {.v = dunst_closea } },
 
 
+	{ MODKEY|ShiftMask,             XK_o,  spawn,          		 {.v = syncthing } },
+//	{ MODKEY|ShiftMask,             XK_o,  spawn,          		 {.v = assist_ollama } },
 	{ MODKEY,                       XK_g,  spawn,          		 {.v = gzdoom } },
 	{ MODKEY|ShiftMask,             XK_Tab,  spawn,          	 {.v = passmenu } },
   { MODKEY|ShiftMask,             XK_p,  spawn,          	   {.v = slockmd } },

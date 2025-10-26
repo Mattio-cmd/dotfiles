@@ -64,7 +64,8 @@ static const Rule rules[] = {
 	{ "LibreWolf", NULL,  NULL,         1 << 0,      0,             0,           0,        -1 },
 	{ "chromium", NULL,  NULL,         1 << 0,      0,             0,           0,        -1 },
 	{ "GZDoom",    NULL,  NULL,         1 << 1,      0,             0,           0,        -1 },
-	{ NULL, NULL, "Virtual Machine Manager",         1 << 7,      0,             0,           0,        -1 },
+	{ NULL, NULL, "Virtual Machine Manager",         1 << 8,      0,             0,           0,        -1 },
+	{ NULL, NULL, "win11 on QEMU/KVM",         1 << 7,      0,             0,           0,        -1 },
 	{ "Signal",   NULL,   NULL,         1 << 6,      0,             0,           0,        -1 },
 	{ "Syncthing GTK",   NULL,   NULL,         1 << 2,      0,             0,           0,        -1 },
 	{ "telegram-desktop",   NULL,   NULL,         1 << 4,      0,             0,           0,        -1 },
@@ -207,6 +208,7 @@ static Key keys[] = {
 //	{ MODKEY|ShiftMask,             XK_o,  spawn,          		 {.v = assist_ollama } },
 	{ MODKEY,                       XK_g,  spawn,          		 {.v = gzdoom } },
 	{ MODKEY|ShiftMask,             XK_Tab,  spawn,          	 {.v = passmenu } },
+	{ MODKEY,                       XK_Insert, spawn,        	 SHCMD("xdotool type $(grep -v '^#' ~/.local/share/bookmarks | dmenu -i -l 50 | cut -d ' ' -f1)") },
   { MODKEY|ShiftMask,             XK_p,  spawn,          	   {.v = slockmd } },
   { MODKEY,                       XK_s,  spawn,          	   {.v = screenshotmd } },
 

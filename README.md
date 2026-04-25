@@ -14,16 +14,13 @@ Keep in mind that hyprland is configured for my two monitor set-up, so you might
 - [x] dmenu
 - [x] slock
 - [ ] hyprland
-- [ ] alacritty
+- [x] alacritty
 - [x] starship
 - [x] zsh
 - [x] hosts file
 - [x] some fetch tools and their configs
-- [x] picom (jonasburg for)
+- [x] picom (jonasburg fork)
 - [x] dunst
-- [x] some X related stuff (xinitrc and Xressources)
-- [x] kitty
-- [x] eww
 
 
 ## Showcase
@@ -37,7 +34,7 @@ Obsolete, WIP
 
 ## Installation
 
-- You can either install everything manually or use the script i provide. I would do it manually because idk about the script, but you can use it if you want.
+- You can either install everything manually or use the script i provide (experimental and bad).
 
 ```
 $ git clone https://github.com/Mattio-cmd/dotfiles

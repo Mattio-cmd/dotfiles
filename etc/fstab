@@ -1,0 +1,12 @@
+# Static information about the filesystems.
+# See fstab(5) for details.
+
+# <file system> <dir> <type> <options> <dump> <pass>
+# /dev/mapper/lolol
+UUID=2bbc301c-ecca-41c9-909c-98163916ff49	/         	ext4      	rw,relatime	0 1
+
+# /dev/nvme0n1p1
+UUID=405C-BCCA      	/boot/efi 	vfat      	rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro	0 2
+
+# /dev/sdb3 
+UUID=47c0cff1-1d0c-4cfe-98f2-8ab00c6b53fa  /media/games  ext4  defaults,nofail  0  2

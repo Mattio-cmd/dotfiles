@@ -72,6 +72,7 @@ static const Rule rules[] = {
 	{ "TelegramDesktop",   NULL,   NULL,         1 << 4,      0,             0,           0,        -1 },
   { "minecraft-launcher",     NULL,   NULL,         1 << 1,      0,             0,           0,        -1 },
   { "libreoffice", NULL, NULL,        1 << 2,      0,             0,           0,        -1 },
+  { "localsend", NULL, NULL,        1 << 6,      0,             0,           0,        -1 },
   { "qbittorrent", NULL, NULL,        1 << 2,      0,             0,           0,        -1 },
   { "Heroic Games Launcher", NULL, NULL, 1 << 1,   0,             0,           0,        -1 },
   { "ollama-float",          NULL, NULL, 0, 1, 0, 0, -1 },
@@ -125,6 +126,7 @@ static const char *steamcmd[]         = { "steam", NULL };
 static const char *nvidia[]           = { "nvidia-settings", NULL };
 static const char *assist_ollama[]    = { "assist_ollama.sh", NULL };
 static const char *syncthing[]        = { "syncthing-gtk", NULL };
+static const char *blueman[]          = { "blueman-manager", NULL };
 
 static const char *greek[]            = { "greekleters.sh", NULL };
 
@@ -180,6 +182,9 @@ static Key keys[] = {
 	{ 0,                       XF86XK_AudioPlay, spawn, {.v = pauseSong2 } },
 	{ 0,                       XF86XK_AudioPrev, spawn, {.v = pauseSong2   } },
 
+  // General media toggle
+  { 0,                       XK_F12,       spawn, SHCMD("playerctl play-pause") },
+
 	{ 0,                       XK_F6,        spawn, {.v = get_vol } },
 	{ 0,                       XK_F6,        spawn, {.v = mutevol } },
 
@@ -210,6 +215,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_Tab,  spawn,          	 {.v = passmenu } },
 	{ MODKEY,                       XK_Insert, spawn,        	 SHCMD("xdotool type $(grep -v '^#' ~/.local/share/bookmarks | dmenu -i -l 50 | cut -d ' ' -f1)") },
   { MODKEY|ShiftMask,             XK_p,  spawn,          	   {.v = slockmd } },
+  { MODKEY|ShiftMask,             XK_b,  spawn,          	   {.v = blueman } },
   { MODKEY,                       XK_s,  spawn,          	   {.v = screenshotmd } },
 
 	{ MODKEY|ShiftMask,             XK_a,  spawn,              {.v = signalmd } },
@@ -218,7 +224,7 @@ static Key keys[] = {
   { MODKEY,                       XK_r,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_r,      spawn,          {.v = greek } },
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
-  { MODKEY,                       XK_p,      spawn,          {.v = librewmd } },
+  /*{ MODKEY,                       XK_p,      spawn,          {.v = librewmd } },*/
   { MODKEY,                       XK_t,      spawn,          {.v = pcmanfmmd } },
   { MODKEY,                       XK_i,      spawn,          {.v = libreofficemd } },
   { MODKEY,                       XK_d,      spawn,          {.v = discord } },

@@ -1,12 +1,11 @@
 # Created by newuser for 5.8
-EDITOR='nvim'
+export EDITOR='nvim'
 export XDG_DATA_HOME=$HOME/.local/share
 export XDG_CONFIG_HOME=$HOME/.config
 export XDG_STATE_HOME=$HOME/.local/state
 export XDG_CACHE_HOME=$HOME/.cache/
 export HISTFILE="${XDG_STATE_HOME}"/bash/history
-export GTK_THEME="Mojave-dark"
-export GTK_ICON_THEME="sakura"
+#export GTK_ICON_THEME="sakura"
 
 #source /opt/oss-cad-suite/environment
 
@@ -77,7 +76,8 @@ alias la='exa -l  -a --header --icons'
 
 alias oss-cad_start='source /opt/oss-cad-suite/environment'
 
-alias tec='cd /home/mattio/Documents/universidad/TEC/2025/Semestre\ II && exa -l --header'
+alias tec='cd /home/mattio/Documents/universidad/TEC/2026/Semestre\ I && exa -l --header'
+alias tablet_uni='cd /home/mattio/Sync/uni/2026/Semestre\ I'
 alias tree='exa -T'
 alias ctree='treefetch --xmas'
 alias aquarium='asciiquarium'
@@ -85,7 +85,7 @@ alias cat='bat --theme gruvbox-dark'
 alias du='dust'
 alias df='duf'
 alias sxiv='nsxiv -b'
-alias anki='setxkbmap us; anki; setxkbmap -layout us,it,es -variant qwerty -option "grp:alt_space_toggle" &'
+#alias anki='setxkbmap us; anki; setxkbmap -layout us,it,es -variant qwerty -option "grp:alt_space_toggle" &'
 alias haxorman='unimatrix -s 96 -c green'
 alias glow="glow --tui"
 alias "dmki"='doas make clean install'
@@ -94,6 +94,7 @@ alias gitp='git push'
 alias gita='git add'
 alias gitco='git commit'
 alias gitcl='git clone'
+alias gitch='git checkout'
 alias weather='curl wttr.in'
 alias py='python'
 alias e='exit'
@@ -113,6 +114,19 @@ alias wp-show="sxiv /media/games/wallpapers/wallpapers"
 alias md2pdf="pandoc $1 -s -o out.pdf"
 alias money="cd $HOME/Documents/The\ grind\ never\ stops/HU2/"
 alias lang="cd $HOME/Documents/Lang\ Books; clear; ll"
+alias pokemon-colorscripts="pokemon-colorscripts -r"
+
+alias mcjail='firejail --noprofile \
+  --private \
+  --whitelist=$HOME/.local/share/PrismLauncher \
+  --caps.drop=all \
+  --seccomp \
+  prismlauncher'
+
+alias du-home='dust -d 1 \
+  --ignore-directory "$HOME/.cache" \
+  --ignore-directory "$HOME/.local/share/Steam" \
+  --ignore-directory "$HOME/Games"'
 
 alias record-mic="ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f pulse -ac 2 -i default salida.mp4"
 
@@ -159,20 +173,21 @@ latex+biber_compile() {
 ex () {
   if [ -f "$1" ] ; then
     case $1 in
-      *.tar.bz2)   tar xjf $1   ;;
-      *.tar.gz)    tar xzf $1   ;;
-      *.bz2)       bunzip2 $1   ;;
-      *.rar)       unrar x $1   ;;
-      *.gz)        gunzip $1    ;;
-      *.tar)       tar xf $1    ;;
-      *.tbz2)      tar xjf $1   ;;
-      *.tgz)       tar xzf $1   ;;
-      *.zip)       unzip $1     ;;
-      *.Z)         uncompress $1;;
-      *.7z)        7z x $1      ;;
-      *.deb)       ar x $1      ;;
-      *.tar.xz)    tar xf $1    ;;
-      *.tar.zst)   unzstd $1    ;;
+      *.tar.bz2)   tar xjf "$1"   ;;
+      *.tar.gz)    tar xzf "$1"   ;;
+      *.bz2)       bunzip2 "$1"   ;;
+      *.rar)       unrar x "$1"   ;;
+      *.gz)        gunzip "$1"    ;;
+      *.tar)       tar xf "$1"    ;;
+      *.tbz2)      tar xjf "$1"   ;;
+      *.tgz)       tar xzf "$1"   ;;
+      *.zip)       unzip "$1"     ;;
+      *.Z)         uncompress "$1";;
+      *.7z)        7z x "$1"      ;;
+      *.deb)       ar x "$1"      ;;
+      *.tar.xz)    tar xf "$1"    ;;
+      *.tar.zst)   unzstd "$1"    ;;
+      *.xz)        unxz "$1"      ;;   # 👈 added
       *)           echo "'$1' cannot be extracted via ex()" ;;
     esac
   else

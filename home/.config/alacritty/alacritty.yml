@@ -1,0 +1,134 @@
+env:
+  TERM: st-256color
+
+shell:
+  program: /bin/sh
+
+window:
+  padding:
+    x: 9
+    y: 9
+  dynamic_padding: false
+  opacity: 0.91
+  decorations: full
+
+scrolling:
+  history: 10000
+  multiplier: 3
+
+font:
+  normal:
+    family: "Iosevka Nerd Font"
+    style: Regular
+  bold:
+    family: "Iosevka Nerd Font"
+    style: Bold
+  italic:
+    family: "Iosevka Nerd Font"
+    style: Italic
+  bold_italic:
+    family: "Iosevka Nerd Font"
+    style: Bold Italic
+
+  size: 19.0
+
+  offset:
+    x: 0
+    y: 0
+
+  glyph_offset:
+    x: 0
+    y: 0
+
+  # Emoji fallback
+  fallback:
+    - "Noto Color Emoji"
+
+draw_bold_text_with_bright_colors: true
+
+colors:
+  primary:
+    background: "#1b1b1d"
+    foreground: "#fbf1c7"
+
+  cursor:
+    text: "#262626"
+    cursor: "#cccccc"
+
+  normal:
+    black:   "#1B1B1D"
+    red:     "#c34043"
+    green:   "#76946a"
+    yellow:  "#c0A36E"
+    blue:    "#7e9cd8"
+    magenta: "#957fb8"
+    cyan:    "#6a9578"
+    white:   "#727169"
+
+  bright:
+    black:   "#928374"
+    red:     "#E82424"
+    green:   "#98BB6C"
+    yellow:  "#E6C384"
+    blue:    "#7FB4CA"
+    magenta: "#938AA9"
+    cyan:    "#7AA89F"
+    white:   "#DCD7BA"
+
+selection:
+  semantic_escape_chars: " "
+
+cursor:
+  style:
+    shape: Block
+    blinking: Off
+  thickness: 0.2
+
+mouse:
+  hide_when_typing: true
+
+bell:
+  animation: Off
+  duration: 0
+
+# URL handling (replacement for st externalpipe/urlhandler)
+hints:
+  enabled:
+    - regex: "(https?://[\\w\\d./?=#%&_-]+)"
+      command: xdg-open
+      post_processing: true
+      mouse:
+        enabled: true
+      binding:
+        key: U
+        mods: Alt
+
+key_bindings:
+  # Copy / Paste (matching your Alt + Shift style)
+  - { key: C, mods: Alt|Shift, action: Copy }
+  - { key: V, mods: Alt|Shift, action: Paste }
+  - { key: C, mods: Alt, action: Copy }
+  - { key: V, mods: Alt, action: Paste }
+  - { key: Insert, mods: Shift, action: Paste }
+
+  # Scrolling (approximation of your k/j + PgUp/PgDn)
+  - { key: K, mods: Alt, action: ScrollLineUp }
+  - { key: J, mods: Alt, action: ScrollLineDown }
+  - { key: Up, mods: Alt, action: ScrollLineUp }
+  - { key: Down, mods: Alt, action: ScrollLineDown }
+  - { key: PageUp, mods: Alt, action: ScrollPageUp }
+  - { key: PageDown, mods: Alt, action: ScrollPageDown }
+
+  # Font zoom (replacement for zoom/zoomreset)
+  - { key: Equals, mods: Alt|Shift, action: IncreaseFontSize }
+  - { key: Minus, mods: Alt|Shift, action: DecreaseFontSize }
+  - { key: Key0, mods: Alt|Shift, action: ResetFontSize }
+
+  # Open URL hint (Alt+U like your st binding vibe)
+  - { key: U, mods: Alt, action: Hint }
+
+# Performance (closest equivalents; Alacritty handles most internally)
+live_config_reload: true
+
+debug:
+  render_timer: false

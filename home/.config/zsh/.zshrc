@@ -15,7 +15,7 @@ export QT_STYLE_OVERRIDE=kvantum
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-export GNUPGHOME="$XDG_DATA_HOME"/gnupg
+export GNUPGHOME="$XDG_DATA_HOME"/gnupg ## <-- AQUI HERE QUI HIER
 export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
 export XCURSOR_PATH=/usr/share/icons:$XDG_DATA_HOME/icons
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass
@@ -42,8 +42,12 @@ export QT_STYLE_OVERRIDE=Fusion
 export XINITRC="$XDG_CONFIG_HOME"/X11/.xinitrc
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
 
+export ANDROID_USER_HOME="$XDG_DATA_HOME"/android
 
-alias monerod=monerod --data-dir "$XDG_DATA_HOME"/.bitmonero
+export ELECTRUMDIR="$XDG_DATA_HOME/electrum"
+
+
+alias monerod=monerod --data-dir "$XDG_DATA_HOME"/bitmonero
 alias z='zathura'
 alias calc='rofi -show calc -modi calc -no-show-match -no-sort'
 alias dosbox=dosbox -conf "$XDG_CONFIG_HOME"/.dosbox/dosbox.conf
@@ -115,6 +119,8 @@ alias md2pdf="pandoc $1 -s -o out.pdf"
 alias money="cd $HOME/Documents/The\ grind\ never\ stops/HU2/"
 alias lang="cd $HOME/Documents/Lang\ Books; clear; ll"
 alias pokemon-colorscripts="pokemon-colorscripts -r"
+alias adb='HOME="$XDG_DATA_HOME"/android adb'
+alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
 
 alias mcjail='firejail --noprofile \
   --private \

@@ -1,0 +1,125 @@
+[env]
+TERM = "st-256color"
+
+[terminal.shell]
+program = "/usr/bin/zsh"
+
+[window]
+opacity = 0.91
+decorations = "Full"
+dynamic_padding = false
+
+[window.padding]
+x = 9
+y = 9
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[font]
+size = 13.0
+
+[font.normal]
+family = "Iosevka Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "Iosevka Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "Iosevka Nerd Font"
+style = "Italic"
+
+[font.bold_italic]
+family = "Iosevka Nerd Font"
+style = "Bold Italic"
+
+# NOTE: fallback handling is fontconfig-based in TOML era
+# so just make sure Noto Color Emoji is installed
+
+[colors.primary]
+background = "#1b1b1d"
+foreground = "#fbf1c7"
+
+[colors.cursor]
+text = "#262626"
+cursor = "#cccccc"
+
+[colors.normal]
+black   = "#1B1B1D"
+red     = "#c34043"
+green   = "#76946a"
+yellow  = "#c0A36E"
+blue    = "#7e9cd8"
+magenta = "#957fb8"
+cyan    = "#6a9578"
+white   = "#727169"
+
+[colors.bright]
+black   = "#928374"
+red     = "#E82424"
+green   = "#98BB6C"
+yellow  = "#E6C384"
+blue    = "#7FB4CA"
+magenta = "#938AA9"
+cyan    = "#7AA89F"
+white   = "#DCD7BA"
+
+[selection]
+semantic_escape_chars = " "
+
+[cursor]
+thickness = 0.2
+
+[cursor.style]
+shape = "Block"
+blinking = "Off"
+
+[mouse]
+hide_when_typing = true
+
+[bell]
+animation = "Linear"
+duration = 0
+
+[general]
+live_config_reload = true
+
+# URL handling (replacement for st externalpipe)
+[[hints.enabled]]
+regex = "(https?://[\\w\\d./?=#%&_-]+)"
+command = "xdg-open"
+post_processing = true
+
+[hints.enabled.mouse]
+enabled = true
+
+[hints.enabled.binding]
+key = "U"
+mods = "Alt"
+
+# Keybindings (approximation of your st setup)
+[keyboard]
+
+bindings = [
+  { key = "C", mods = "Alt|Shift", action = "Copy" },
+  { key = "V", mods = "Alt|Shift", action = "Paste" },
+  { key = "C", mods = "Alt", action = "Copy" },
+  { key = "V", mods = "Alt", action = "Paste" },
+  { key = "Insert", mods = "Shift", action = "Paste" },
+
+  { key = "K", mods = "Alt", action = "ScrollLineUp" },
+  { key = "J", mods = "Alt", action = "ScrollLineDown" },
+  { key = "Up", mods = "Alt", action = "ScrollLineUp" },
+  { key = "Down", mods = "Alt", action = "ScrollLineDown" },
+  { key = "PageUp", mods = "Alt", action = "ScrollPageUp" },
+  { key = "PageDown", mods = "Alt", action = "ScrollPageDown" },
+
+  { key = "Equals", mods = "Alt|Shift", action = "IncreaseFontSize" },
+  { key = "Minus", mods = "Alt|Shift", action = "DecreaseFontSize" },
+  { key = "Key0", mods = "Alt|Shift", action = "ResetFontSize" },
+
+  { key = "U", mods = "Alt", chars = "\u001b[1;3u" }
+]

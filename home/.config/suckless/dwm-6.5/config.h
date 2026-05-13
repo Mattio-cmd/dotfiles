@@ -60,7 +60,7 @@ static const Rule rules[] = {
 	{ "steam",    NULL,   NULL,         1 << 5,      0,	            0,           0,        -1 },
 	{ "obs",      NULL,   NULL,         1 << 8,      0,		          0,           0,        -1 },
 	{ "Brave",    NULL,   NULL,         1 << 0,      0,             0,           0,        -1 },
-	{ "librewolf",    NULL,   NULL,         1 << 0,      0,             0,           0,        -1 },
+//	{ "librewolf",    NULL,   NULL,         1 << 0,      0,             0,           0,        -1 },
 	{ "LibreWolf", NULL,  NULL,         1 << 0,      0,             0,           0,        -1 },
 	{ "chromium", NULL,  NULL,         1 << 0,      0,             0,           0,        -1 },
 	{ "GZDoom",    NULL,  NULL,         1 << 1,      0,             0,           0,        -1 },

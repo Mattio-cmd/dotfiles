@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Get client info
+read -r PID
+read -r TITLE
+read -r APPID
+read -r TAGS
+read -r GEOMETRY
+
+[ -n "$GEOMETRY" ] || exit 1
+
+tempdir="/tmp/screenshots"
+mkdir -p "$tempdir"
+file="$(mktemp -p "$tempdir" "XXXXXX.png")"
+
+# Grab the screenshot! Very conveniently, GEOMETRY format matches the one
+# expected by grim
+grim -g "$GEOMETRY" "$file" || exit
+
+wl-copy -t image/png < "$file"
+notify-send -i "$file" "Screenshot taken!" "Image copied to clipboard and saved to $file"

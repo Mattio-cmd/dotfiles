@@ -1,0 +1,153 @@
+From b46440c982a5149570bb58369f84ef5082279123 Mon Sep 17 00:00:00 2001
+From: Nikita Ivanov <nikita.vyach.ivanov@gmail.com>
+Date: Sun, 9 Feb 2025 23:12:09 +0100
+Subject: [PATCH] setrule: add/change rules at runtime
+
+---
+ config.def.h |  4 ++++
+ dwl.c        | 65 +++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 68 insertions(+), 1 deletion(-)
+
+diff --git a/config.def.h b/config.def.h
+index 8a6eda0..48acf2d 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -20,6 +20,9 @@ static const float fullscreen_bg[]         = {0.0f, 0.0f, 0.0f, 1.0f}; /* You ca
+ /* logging */
+ static int log_level = WLR_ERROR;
+ 
++/* Max amount of dynamically added rules */
++#define RULES_MAX 100
++
+ static const Rule rules[] = {
+ 	/* app_id             title       tags mask     isfloating   monitor */
+ 	{ "Gimp_EXAMPLE",     NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
+@@ -138,6 +141,7 @@ static const Key keys[] = {
+ 	{ MODKEY,                    XKB_KEY_space,       setlayout,        {0} },
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,       togglefloating,   {0} },
+ 	{ MODKEY,                    XKB_KEY_e,           togglefullscreen, {0} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_R,           setruleisfloating,{0} },
+ 	{ MODKEY,                    XKB_KEY_0,           view,             {.ui = ~0} },
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright,  tag,              {.ui = ~0} },
+ 	{ MODKEY,                    XKB_KEY_comma,       focusmon,         {.i = WLR_DIRECTION_LEFT} },
+diff --git a/dwl.c b/dwl.c
+index 44f3ad9..3c765d1 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -287,6 +287,7 @@ static void focusmon(const Arg *arg);
+ static void focusstack(const Arg *arg);
+ static Client *focustop(Monitor *m);
+ static void fullscreennotify(struct wl_listener *listener, void *data);
++static Rule *getrule(Client *c);
+ static void gpureset(struct wl_listener *listener, void *data);
+ static void handlesig(int signo);
+ static void incnmaster(const Arg *arg);
+@@ -327,6 +328,7 @@ static void setlayout(const Arg *arg);
+ static void setmfact(const Arg *arg);
+ static void setmon(Client *c, Monitor *m, uint32_t newtags);
+ static void setpsel(struct wl_listener *listener, void *data);
++static void setruleisfloating(const Arg *arg);
+ static void setsel(struct wl_listener *listener, void *data);
+ static void setup(void);
+ static void spawn(const Arg *arg);
+@@ -436,6 +438,9 @@ static struct wl_listener request_start_drag = {.notify = requeststartdrag};
+ static struct wl_listener start_drag = {.notify = startdrag};
+ static struct wl_listener new_session_lock = {.notify = locksession};
+ 
++static Rule *drules;
++static size_t druleslen;
++
+ #ifdef XWAYLAND
+ static void activatex11(struct wl_listener *listener, void *data);
+ static void associatex11(struct wl_listener *listener, void *data);
+@@ -486,7 +491,7 @@ applyrules(Client *c)
+ 	appid = client_get_appid(c);
+ 	title = client_get_title(c);
+ 
+-	for (r = rules; r < END(rules); r++) {
++	for (r = drules; r < drules + druleslen; r++) {
+ 		if ((!r->title || strstr(title, r->title))
+ 				&& (!r->id || strstr(appid, r->id))) {
+ 			c->isfloating = r->isfloating;
+@@ -1532,6 +1537,51 @@ fullscreennotify(struct wl_listener *listener, void *data)
+ 	setfullscreen(c, client_wants_fullscreen(c));
+ }
+ 
++Rule *
++getrule(Client *c)
++{
++	Rule *r;
++	const Rule *e;
++	const char *appid, *title;
++
++	if (!c)
++		return NULL;
++	
++	appid = client_get_appid(c);
++	title = client_get_title(c);
++
++	for (r = drules + druleslen - 1; r >= drules; r--)
++		if ((!r->title || strstr(title, r->title))
++				&& (!r->id || strstr(appid, r->id)))
++			goto found;
++
++	if (druleslen >= LENGTH(rules) + RULES_MAX)
++		return NULL; /* No free slots left */
++
++	r = drules + druleslen++;
++
++	/* Use [NULL,NULL] as the default rule if exists */
++	for (e = rules; e < END(rules); e++)
++		if (!e->title && !e->id) {
++			*r = *e;
++			break;
++		}
++
++	/* No default rule found, set reasoble defaults */
++	if (e >= END(rules)) {
++		r->monitor = -1;
++	}
++
++	/* Only set title if appid is unset */
++	if (strcmp(appid, "broken") == 0)
++		r->title = strdup(title);
++	else
++		r->id = strdup(appid);
++
++found:
++	return r;
++}
++
+ void
+ gpureset(struct wl_listener *listener, void *data)
+ {
+@@ -2431,6 +2481,15 @@ setpsel(struct wl_listener *listener, void *data)
+ 	wlr_seat_set_primary_selection(seat, event->source, event->serial);
+ }
+ 
++void
++setruleisfloating(const Arg *arg)
++{
++	Rule *r = getrule(focustop(selmon));
++	if (!r)
++		return;
++	r->isfloating = !r->isfloating;
++}
++
+ void
+ setsel(struct wl_listener *listener, void *data)
+ {
+@@ -2664,6 +2723,10 @@ setup(void)
+ 		fprintf(stderr, "failed to setup XWayland X server, continuing without it\n");
+ 	}
+ #endif
++
++	drules = ecalloc(LENGTH(rules) + RULES_MAX, sizeof(Rule));
++	memcpy(drules, rules, sizeof(rules));
++	druleslen = LENGTH(rules);
+ }
+ 
+ void
+-- 
+2.53.0
+

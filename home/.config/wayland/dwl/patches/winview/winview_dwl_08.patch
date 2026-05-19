@@ -1,0 +1,55 @@
+From d53f64b3baee1e14c59b9b6cead024b91e185bd7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Desgualdo=20Pereira?= <desgua@gmail.com>
+Date: Sat, 14 Mar 2026 18:34:36 -0300
+Subject: [PATCH] update to dwl 0.8
+
+---
+ config.def.h |  1 +
+ dwl.c        | 12 ++++++++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/config.def.h b/config.def.h
+index 8a6eda0..3c1f16b 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -139,6 +139,7 @@ static const Key keys[] = {
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,       togglefloating,   {0} },
+ 	{ MODKEY,                    XKB_KEY_e,           togglefullscreen, {0} },
+ 	{ MODKEY,                    XKB_KEY_0,           view,             {.ui = ~0} },
++	{ MODKEY,                    XKB_KEY_o,           winview,          {0}},
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright,  tag,              {.ui = ~0} },
+ 	{ MODKEY,                    XKB_KEY_comma,       focusmon,         {.i = WLR_DIRECTION_LEFT} },
+ 	{ MODKEY,                    XKB_KEY_period,      focusmon,         {.i = WLR_DIRECTION_RIGHT} },
+diff --git a/dwl.c b/dwl.c
+index 101a45f..f3b75e0 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -348,6 +348,7 @@ static void urgent(struct wl_listener *listener, void *data);
+ static void view(const Arg *arg);
+ static void virtualkeyboard(struct wl_listener *listener, void *data);
+ static void virtualpointer(struct wl_listener *listener, void *data);
++static void winview(const Arg *a);
+ static Monitor *xytomon(double x, double y);
+ static void xytonode(double x, double y, struct wlr_surface **psurface,
+ 		Client **pc, LayerSurface **pl, double *nx, double *ny);
+@@ -3006,6 +3007,17 @@ virtualpointer(struct wl_listener *listener, void *data)
+ 		wlr_cursor_map_input_to_output(cursor, device, event->suggested_output);
+ }
+ 
++void
++winview(const Arg *a) {
++	Arg b = {0};
++	Client *sel = focustop(selmon);
++	if(!sel)
++		return;
++	b.ui = sel -> tags;
++	view(&b);
++	return;
++}
++
+ Monitor *
+ xytomon(double x, double y)
+ {
+-- 
+2.51.0
+

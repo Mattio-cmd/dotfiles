@@ -1,0 +1,135 @@
+From 136cdeb302fdfe28e5cd5c6a1693b05c3d1bfb58 Mon Sep 17 00:00:00 2001
+From: sewn <sewn@disroot.org>
+Date: Sat, 7 Dec 2024 09:59:01 +0300
+Subject: [PATCH] add meson
+
+---
+ .gitignore               |  1 +
+ meson.build              | 93 ++++++++++++++++++++++++++++++++++++++++
+ subprojects/wlroots.wrap |  5 +++
+ 3 files changed, 99 insertions(+)
+ create mode 100644 meson.build
+ create mode 100644 subprojects/wlroots.wrap
+
+diff --git a/.gitignore b/.gitignore
+index 0dde90e..9246a31 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,3 +4,4 @@ dwl
+ *-protocol.h
+ .ccls-cache
+ config.h
++subprojects/wlroots
+diff --git a/meson.build b/meson.build
+new file mode 100644
+index 0000000..e2219ec
+--- /dev/null
++++ b/meson.build
+@@ -0,0 +1,93 @@
++project(
++	'dwl',
++	'c',
++	version: run_command('git', 'describe', '--tags', '--dirty', check: false).stdout().strip(),
++	license: [ 'GPL-3.0-only', 'CC0-1.0', 'MIT' ],
++	meson_version: '>=1.3',
++	default_options: [
++		'c_std=c99',
++		'warning_level=2',
++	],
++)
++
++configure_file(
++	input: 'config.def.h',
++	output: 'config.h',
++	copy: true,
++	install_dir: '.',
++)
++
++cc = meson.get_compiler('c')
++
++add_project_arguments([
++	'-DWLR_USE_UNSTABLE',
++	'-D_POSIX_C_SOURCE=200809L',
++	'-DVERSION="@0@"'.format(meson.project_version()),
++
++	'-Wno-unused-parameter',
++], language: 'c')
++
++wlroots = subproject('wlroots',
++	default_options: [
++		'backends=drm,libinput,auto',
++		'default_library=static',
++		'examples=false',
++		'session=enabled',
++	],
++)
++wlroots_has_xwlr = wlroots.get_variable('features').get('xwayland')
++
++libinput = dependency('libinput')
++math = cc.find_library('m')
++wayland_server = dependency('wayland-server')
++xcb = dependency('xcb', required: wlroots_has_xwlr)
++xcb_icccm = dependency('xcb-icccm', required: wlroots_has_xwlr)
++xkbcommon = dependency('xkbcommon')
++
++dwl_deps = [
++	libinput,
++	math,
++	wayland_server,
++	wlroots.get_variable('wlroots'),
++	xkbcommon,
++]
++
++if wlroots_has_xwlr
++	add_project_arguments('-DXWAYLAND', language: 'c')
++	dwl_deps += [ xcb, xcb_icccm ]
++endif
++
++wayland_protos = dependency('wayland-protocols')
++wayland_scanner = dependency('wayland-scanner')
++wayland_protocol_dir = wayland_protos.get_variable('pkgdatadir')
++wayland_scanner_prog = find_program(
++	wayland_scanner.get_variable('wayland_scanner'),
++	native: true,
++)
++
++protocols = [
++	wayland_protocol_dir / 'staging/cursor-shape/cursor-shape-v1.xml',
++	wayland_protocol_dir / 'unstable/pointer-constraints/pointer-constraints-unstable-v1.xml',
++	'protocols/wlr-layer-shell-unstable-v1.xml',
++	'protocols/wlr-output-power-management-unstable-v1.xml',
++	wayland_protocol_dir / 'stable/xdg-shell/xdg-shell.xml',
++]
++protocols_src = []
++
++wayland_scanner_server = generator(
++	wayland_scanner_prog,
++	output: '@BASENAME@-protocol.h',
++	arguments: ['server-header', '@INPUT@', '@OUTPUT@'],
++)
++
++foreach xml : protocols
++	protocols_src += wayland_scanner_server.process(xml)
++endforeach
++
++executable(
++	'dwl',
++	[ 'dwl.c', 'util.c', protocols_src ],
++	include_directories: [include_directories('.')],
++	dependencies: dwl_deps,
++	install: true,
++)
+diff --git a/subprojects/wlroots.wrap b/subprojects/wlroots.wrap
+new file mode 100644
+index 0000000..3d9cbfa
+--- /dev/null
++++ b/subprojects/wlroots.wrap
+@@ -0,0 +1,5 @@
++[wrap-git]
++url = https://gitlab.freedesktop.org/wlroots/wlroots.git
++revision = master
++depth = 1
++clone-recursive = true
+-- 
+2.47.1
+

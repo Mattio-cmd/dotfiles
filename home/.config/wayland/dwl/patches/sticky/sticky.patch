@@ -1,0 +1,85 @@
+From d36eee35fdc4b0e666fb04a580200e8c5d2b1f9e Mon Sep 17 00:00:00 2001
+From: nate zhou <gnuunixchad@outlook.com>
+Date: Sat, 28 Feb 2026 22:55:33 +0800
+Subject: [PATCH] Update sticky patch to v0.8
+
+---
+ dwl.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
+
+diff --git a/dwl.c b/dwl.c
+index 44f3ad9..05070ef 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -74,7 +74,7 @@
+ #define MAX(A, B)               ((A) > (B) ? (A) : (B))
+ #define MIN(A, B)               ((A) < (B) ? (A) : (B))
+ #define CLEANMASK(mask)         (mask & ~WLR_MODIFIER_CAPS)
+-#define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && ((C)->tags & (M)->tagset[(M)->seltags]))
++#define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && (((C)->tags & (M)->tagset[(M)->seltags]) || C->issticky))
+ #define LENGTH(X)               (sizeof X / sizeof X[0])
+ #define END(A)                  ((A) + LENGTH(A))
+ #define TAGMASK                 ((1u << TAGCOUNT) - 1)
+@@ -137,7 +137,7 @@ typedef struct {
+ #endif
+ 	unsigned int bw;
+ 	uint32_t tags;
+-	int isfloating, isurgent, isfullscreen;
++	int isfloating, isurgent, isfullscreen, issticky;
+ 	uint32_t resize; /* configure serial of a pending resize */
+ } Client;
+ 
+@@ -323,6 +323,7 @@ static void setcursor(struct wl_listener *listener, void *data);
+ static void setcursorshape(struct wl_listener *listener, void *data);
+ static void setfloating(Client *c, int floating);
+ static void setfullscreen(Client *c, int fullscreen);
++static void setsticky(Client *c, int sticky);
+ static void setlayout(const Arg *arg);
+ static void setmfact(const Arg *arg);
+ static void setmon(Client *c, Monitor *m, uint32_t newtags);
+@@ -335,6 +336,7 @@ static void tag(const Arg *arg);
+ static void tagmon(const Arg *arg);
+ static void tile(Monitor *m);
+ static void togglefloating(const Arg *arg);
++static void togglesticky(const Arg *arg);
+ static void togglefullscreen(const Arg *arg);
+ static void toggletag(const Arg *arg);
+ static void toggleview(const Arg *arg);
+@@ -2368,6 +2370,17 @@ setfullscreen(Client *c, int fullscreen)
+ 	printstatus();
+ }
+ 
++void
++setsticky(Client *c, int sticky)
++{
++	if(sticky && !c->issticky) {
++		c->issticky = 1;
++	} else if(!sticky && c->issticky) {
++		c->issticky = 0;
++		arrange(c->mon);
++	}
++}
++
+ void
+ setlayout(const Arg *arg)
+ {
+@@ -2760,6 +2773,16 @@ togglefullscreen(const Arg *arg)
+ 		setfullscreen(sel, !sel->isfullscreen);
+ }
+ 
++void
++togglesticky(const Arg *arg)
++{
++	Client *c = focustop(selmon);
++	if(!c)
++		return;
++
++	setsticky(c, !c->issticky);
++}
++
+ void
+ toggletag(const Arg *arg)
+ {
+-- 
+2.53.0
+

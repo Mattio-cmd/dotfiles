@@ -1,0 +1,124 @@
+From 155578f30dc91363e7580c3020ad464ab561acd3 Mon Sep 17 00:00:00 2001
+From: Micah Gorrell <micah.gorrell@venafi.com>
+Date: Fri, 26 May 2023 08:17:20 -0600
+Subject: [PATCH] Implemented support for the DRM lease protocol, as needed to
+ use devices such as VR headsets
+
+---
+ dwl.c | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+
+diff --git a/dwl.c b/dwl.c
+index 101a45f..4740dfe 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -23,6 +23,7 @@
+ #include <wlr/types/wlr_data_control_v1.h>
+ #include <wlr/types/wlr_data_device.h>
+ #include <wlr/types/wlr_drm.h>
++#include <wlr/types/wlr_drm_lease_v1.h>
+ #include <wlr/types/wlr_export_dmabuf_v1.h>
+ #include <wlr/types/wlr_ext_data_control_v1.h>
+ #include <wlr/types/wlr_fractional_scale_v1.h>
+@@ -316,6 +317,7 @@ static void powermgrsetmode(struct wl_listener *listener, void *data);
+ static void quit(const Arg *arg);
+ static void rendermon(struct wl_listener *listener, void *data);
+ static void requestdecorationmode(struct wl_listener *listener, void *data);
++static void requestdrmlease(struct wl_listener *listener, void *data);
+ static void requeststartdrag(struct wl_listener *listener, void *data);
+ static void requestmonstate(struct wl_listener *listener, void *data);
+ static void resize(Client *c, struct wlr_box geo, int interact);
+@@ -377,6 +379,7 @@ static struct wl_list clients; /* tiling order */
+ static struct wl_list fstack;  /* focus order */
+ static struct wlr_idle_notifier_v1 *idle_notifier;
+ static struct wlr_idle_inhibit_manager_v1 *idle_inhibit_mgr;
++static struct wlr_drm_lease_v1_manager *drm_lease_manager;
+ static struct wlr_layer_shell_v1 *layer_shell;
+ static struct wlr_output_manager_v1 *output_mgr;
+ static struct wlr_virtual_keyboard_manager_v1 *virtual_keyboard_mgr;
+@@ -436,6 +439,7 @@ static struct wl_listener request_set_cursor_shape = {.notify = setcursorshape};
+ static struct wl_listener request_start_drag = {.notify = requeststartdrag};
+ static struct wl_listener start_drag = {.notify = startdrag};
+ static struct wl_listener new_session_lock = {.notify = locksession};
++static struct wl_listener drm_lease_request = {.notify = requestdrmlease};
+ 
+ #ifdef XWAYLAND
+ static void activatex11(struct wl_listener *listener, void *data);
+@@ -727,10 +731,16 @@ cleanup(void)
+ void
+ cleanupmon(struct wl_listener *listener, void *data)
+ {
++	struct wlr_output *wlr_output = data;
+ 	Monitor *m = wl_container_of(listener, m, destroy);
+ 	LayerSurface *l, *tmp;
+ 	size_t i;
+ 
++	if (drm_lease_manager && wlr_output->non_desktop) {
++		wlr_drm_lease_v1_manager_withdraw_output (drm_lease_manager, wlr_output);
++		return;
++	}
++
+ 	/* m->layers[i] are intentionally not unlinked */
+ 	for (i = 0; i < LENGTH(m->layers); i++) {
+ 		wl_list_for_each_safe(l, tmp, &m->layers[i], link)
+@@ -783,6 +793,9 @@ cleanuplisteners(void)
+ 	wl_list_remove(&request_start_drag.link);
+ 	wl_list_remove(&start_drag.link);
+ 	wl_list_remove(&new_session_lock.link);
++	if (drm_lease_manager) {
++		wl_list_remove(&drm_lease_request.link);
++	}
+ #ifdef XWAYLAND
+ 	wl_list_remove(&new_xwayland_surface.link);
+ 	wl_list_remove(&xwayland_ready.link);
+@@ -1047,6 +1060,11 @@ createmon(struct wl_listener *listener, void *data)
+ 	struct wlr_output_state state;
+ 	Monitor *m;
+ 
++	if (drm_lease_manager && wlr_output->non_desktop) {
++		wlr_drm_lease_v1_manager_offer_output(drm_lease_manager, wlr_output);
++		return;
++	}
++
+ 	if (!wlr_output_init_render(wlr_output, alloc, drw))
+ 		return;
+ 
+@@ -2183,6 +2201,16 @@ requestdecorationmode(struct wl_listener *listener, void *data)
+ 				WLR_XDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
+ }
+ 
++static void requestdrmlease(struct wl_listener *listener, void *data) {
++	struct wlr_drm_lease_request_v1 *req = data;
++	struct wlr_drm_lease_v1 *lease = wlr_drm_lease_request_v1_grant(req);
++
++	if (!lease) {
++		fprintf(stderr, "Failed to grant lease request");
++		wlr_drm_lease_request_v1_reject(req);
++	}
++}
++
+ void
+ requeststartdrag(struct wl_listener *listener, void *data)
+ {
+@@ -2648,10 +2676,18 @@ setup(void)
+ 	wl_signal_add(&output_mgr->events.apply, &output_mgr_apply);
+ 	wl_signal_add(&output_mgr->events.test, &output_mgr_test);
+ 
++	drm_lease_manager = wlr_drm_lease_v1_manager_create(dpy, backend);
++	if (drm_lease_manager) {
++		wl_signal_add(&drm_lease_manager->events.request, &drm_lease_request);
++	} else {
++		fprintf(stderr, "Failed to create wlr_drm_lease_device_v1; VR will not be available\n");
++	}
++
+ 	/* Make sure XWayland clients don't connect to the parent X server,
+ 	 * e.g when running in the x11 backend or the wayland backend and the
+ 	 * compositor has Xwayland support */
+ 	unsetenv("DISPLAY");
++
+ #ifdef XWAYLAND
+ 	/*
+ 	 * Initialise the XWayland X server.
+-- 
+2.54.0
+

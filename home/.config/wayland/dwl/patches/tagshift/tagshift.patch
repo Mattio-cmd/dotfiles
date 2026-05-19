@@ -1,0 +1,83 @@
+From 938c63ad0a8a706fba0b4db1c66397e9defdcb92 Mon Sep 17 00:00:00 2001
+From: h3nc4 <me@h3nc4.com>
+Date: Mon, 17 Mar 2025 17:38:22 -0300
+Subject: [PATCH] port the tagshift patch from dwm
+
+---
+ config.def.h |  4 ++++
+ dwl.c        | 37 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 41 insertions(+)
+
+diff --git a/config.def.h b/config.def.h
+index 22d2171..72dbaa1 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -131,6 +131,10 @@ static const Key keys[] = {
+ 	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
+ 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
+ 	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
++	{ MODKEY,                    XKB_KEY_Left,       shiftview,      {.i = -1 } },
++	{ MODKEY,                    XKB_KEY_Right,      shiftview,      {.i = +1 } },
++	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Left,       shifttag,       {.i = -1 } },
++	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Right,      shifttag,       {.i = +1 } },
+ 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05f} },
+ 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05f} },
+ 	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
+diff --git a/dwl.c b/dwl.c
+index cf3ef70..be1e89e 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -333,6 +333,8 @@ static void setmon(Client *c, Monitor *m, uint32_t newtags);
+ static void setpsel(struct wl_listener *listener, void *data);
+ static void setsel(struct wl_listener *listener, void *data);
+ static void setup(void);
++static void shiftview(const Arg *arg);
++static void shifttag(const Arg *arg);
+ static void spawn(const Arg *arg);
+ static void startdrag(struct wl_listener *listener, void *data);
+ static void tag(const Arg *arg);
+@@ -2646,6 +2648,41 @@ setup(void)
+ #endif
+ }
+ 
++void
++shiftview(const Arg *arg)
++{
++	Arg a;
++	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
++	if (arg->i > 0) // left circular shift
++		nextseltags = (curseltags << arg->i) | (curseltags >> (TAGCOUNT - arg->i));
++	else // right circular shift 
++		nextseltags = curseltags >> (-arg->i) | (curseltags << (TAGCOUNT + arg->i));
++
++	a.i = nextseltags; // Change view to the new tag
++	view(&a);
++}
++
++void
++shifttag(const Arg *arg)
++{
++	Arg a;
++	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
++	Client *sel = focustop(selmon);
++	if (!sel)
++		return;
++	if (arg->i > 0) // left circular shift 
++		nextseltags = (curseltags << arg->i) | (curseltags >> (TAGCOUNT - arg->i));
++	else // right circular shift 
++		nextseltags = curseltags >> (-arg->i) | (curseltags << (TAGCOUNT + arg->i));
++
++	sel->tags = nextseltags & TAGMASK;// Apply new tag to the client
++	a.i = nextseltags; // Change view to the new tag
++	view(&a);
++
++	arrange(selmon);
++	printstatus(); // change to 'drawbars();' if using "bars" patch
++}
++
+ void
+ spawn(const Arg *arg)
+ {
+-- 
+2.47.2
+

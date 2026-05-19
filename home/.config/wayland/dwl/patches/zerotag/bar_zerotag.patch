@@ -1,0 +1,33 @@
+diff --git a/config.def.h b/config.def.h
+index 7da50d2..f058a17 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -21,7 +21,7 @@ static uint32_t colors[][3]                = {
+ };
+ 
+ /* tagging */
+-static char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
++static char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
+ 
+ /* logging */
+ static int log_level = WLR_ERROR;
+@@ -145,8 +145,6 @@ static const Key keys[] = {
+ 	{ MODKEY,                    XKB_KEY_space,       setlayout,        {0} },
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,       togglefloating,   {0} },
+ 	{ MODKEY,                    XKB_KEY_e,           togglefullscreen, {0} },
+-	{ MODKEY,                    XKB_KEY_0,           view,             {.ui = ~0} },
+-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright,  tag,              {.ui = ~0} },
+ 	{ MODKEY,                    XKB_KEY_comma,       focusmon,         {.i = WLR_DIRECTION_LEFT} },
+ 	{ MODKEY,                    XKB_KEY_period,      focusmon,         {.i = WLR_DIRECTION_RIGHT} },
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,        tagmon,           {.i = WLR_DIRECTION_LEFT} },
+@@ -160,8 +158,10 @@ static const Key keys[] = {
+ 	TAGKEYS(          XKB_KEY_7, XKB_KEY_ampersand,                     6),
+ 	TAGKEYS(          XKB_KEY_8, XKB_KEY_asterisk,                      7),
+ 	TAGKEYS(          XKB_KEY_9, XKB_KEY_parenleft,                     8),
++  TAGKEYS(          XKB_KEY_0, XKB_KEY_parenright,                    9),
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_q,           quit,             {0} },
+ 
++
+ 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
+ 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server, quit, {0} },
+ 	/* Ctrl-Alt-Fx is used to switch to another VT, if you don't know what a VT is

@@ -1,0 +1,883 @@
+From 4985178cfed599c9a32d154f42e02cb66db7a82d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Leonardo=20Hern=C3=A1ndez=20Hern=C3=A1ndez?=
+ <leohdz172@proton.me>
+Date: Fri, 4 Jun 2021 16:51:01 -0500
+Subject: [PATCH 1/2] allow use keycodes instead keysyms
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Leonardo Hernández Hernández <leohdz172@proton.me>
+---
+ config.def.h |  85 ++++-----
+ dwl.c        |  35 ++--
+ keys.h       | 514 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 569 insertions(+), 65 deletions(-)
+ create mode 100644 keys.h
+
+diff --git a/config.def.h b/config.def.h
+index 22d2171d..87a6e60f 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -109,11 +109,11 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
+ /* If you want to use the windows key for MODKEY, use WLR_MODIFIER_LOGO */
+ #define MODKEY WLR_MODIFIER_ALT
+ 
+-#define TAGKEYS(KEY,SKEY,TAG) \
++#define TAGKEYS(KEY,TAG) \
+ 	{ MODKEY,                    KEY,            view,            {.ui = 1 << TAG} }, \
+ 	{ MODKEY|WLR_MODIFIER_CTRL,  KEY,            toggleview,      {.ui = 1 << TAG} }, \
+-	{ MODKEY|WLR_MODIFIER_SHIFT, SKEY,           tag,             {.ui = 1 << TAG} }, \
+-	{ MODKEY|WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT,SKEY,toggletag, {.ui = 1 << TAG} }
++	{ MODKEY|WLR_MODIFIER_SHIFT, KEY,            tag,             {.ui = 1 << TAG} }, \
++	{ MODKEY|WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT,KEY,toggletag,  {.ui = 1 << TAG} }
+ 
+ /* helper for spawning shell commands in the pre dwm-5.0 fashion */
+ #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+@@ -122,51 +122,52 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
+ static const char *termcmd[] = { "foot", NULL };
+ static const char *menucmd[] = { "wmenu-run", NULL };
+ 
++#include "keys.h"
+ static const Key keys[] = {
+-	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
+-	/* modifier                  key                 function        argument */
+-	{ MODKEY,                    XKB_KEY_p,          spawn,          {.v = menucmd} },
+-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,     spawn,          {.v = termcmd} },
+-	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
+-	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
+-	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
+-	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
+-	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05f} },
+-	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05f} },
+-	{ MODKEY,                    XKB_KEY_Return,     zoom,           {0} },
+-	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
+-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_C,          killclient,     {0} },
+-	{ MODKEY,                    XKB_KEY_t,          setlayout,      {.v = &layouts[0]} },
+-	{ MODKEY,                    XKB_KEY_f,          setlayout,      {.v = &layouts[1]} },
+-	{ MODKEY,                    XKB_KEY_m,          setlayout,      {.v = &layouts[2]} },
+-	{ MODKEY,                    XKB_KEY_space,      setlayout,      {0} },
+-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,      togglefloating, {0} },
+-	{ MODKEY,                    XKB_KEY_e,         togglefullscreen, {0} },
+-	{ MODKEY,                    XKB_KEY_0,          view,           {.ui = ~0} },
+-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright, tag,            {.ui = ~0} },
+-	{ MODKEY,                    XKB_KEY_comma,      focusmon,       {.i = WLR_DIRECTION_LEFT} },
+-	{ MODKEY,                    XKB_KEY_period,     focusmon,       {.i = WLR_DIRECTION_RIGHT} },
+-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,       tagmon,         {.i = WLR_DIRECTION_LEFT} },
+-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,    tagmon,         {.i = WLR_DIRECTION_RIGHT} },
+-	TAGKEYS(          XKB_KEY_1, XKB_KEY_exclam,                     0),
+-	TAGKEYS(          XKB_KEY_2, XKB_KEY_at,                         1),
+-	TAGKEYS(          XKB_KEY_3, XKB_KEY_numbersign,                 2),
+-	TAGKEYS(          XKB_KEY_4, XKB_KEY_dollar,                     3),
+-	TAGKEYS(          XKB_KEY_5, XKB_KEY_percent,                    4),
+-	TAGKEYS(          XKB_KEY_6, XKB_KEY_asciicircum,                5),
+-	TAGKEYS(          XKB_KEY_7, XKB_KEY_ampersand,                  6),
+-	TAGKEYS(          XKB_KEY_8, XKB_KEY_asterisk,                   7),
+-	TAGKEYS(          XKB_KEY_9, XKB_KEY_parenleft,                  8),
+-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Q,          quit,           {0} },
++	/* modifier                  key          function        argument */
++	{ MODKEY,                    Key_p,       spawn,          {.v = menucmd} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, Key_Return,  spawn,          {.v = termcmd} },
++	{ MODKEY,                    Key_j,       focusstack,     {.i = +1} },
++	{ MODKEY,                    Key_k,       focusstack,     {.i = -1} },
++	{ MODKEY,                    Key_i,       incnmaster,     {.i = +1} },
++	{ MODKEY,                    Key_d,       incnmaster,     {.i = -1} },
++	{ MODKEY,                    Key_h,       setmfact,       {.f = -0.05f} },
++	{ MODKEY,                    Key_l,       setmfact,       {.f = +0.05f} },
++	{ MODKEY,                    Key_Return,  zoom,           {0} },
++	{ MODKEY,                    Key_Tab,     view,           {0} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, Key_c,       killclient,     {0} },
++	{ MODKEY,                    Key_t,       setlayout,      {.v = &layouts[0]} },
++	{ MODKEY,                    Key_f,       setlayout,      {.v = &layouts[1]} },
++	{ MODKEY,                    Key_m,       setlayout,      {.v = &layouts[2]} },
++	{ MODKEY,                    Key_space,   setlayout,      {0} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, Key_space,   togglefloating, {0} },
++	{ MODKEY,                    Key_e,       togglefullscreen, {0} },
++	{ MODKEY,                    Key_0,       view,           {.ui = ~0} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, Key_0,       tag,            {.ui = ~0} },
++	{ MODKEY,                    Key_comma,   focusmon,       {.i = WLR_DIRECTION_LEFT} },
++	{ MODKEY,                    Key_period,  focusmon,       {.i = WLR_DIRECTION_RIGHT} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, Key_comma,   tagmon,         {.i = WLR_DIRECTION_LEFT} },
++	{ MODKEY|WLR_MODIFIER_SHIFT, Key_period,  tagmon,         {.i = WLR_DIRECTION_RIGHT} },
++	TAGKEYS(                     Key_1,                       0),
++	TAGKEYS(                     Key_2,                       1),
++	TAGKEYS(                     Key_3,                       2),
++	TAGKEYS(                     Key_4,                       3),
++	TAGKEYS(                     Key_5,                       4),
++	TAGKEYS(                     Key_6,                       5),
++	TAGKEYS(                     Key_7,                       6),
++	TAGKEYS(                     Key_8,                       7),
++	TAGKEYS(                     Key_9,                       8),
++	{ MODKEY|WLR_MODIFIER_SHIFT, Key_q,       quit,           {0} },
+ 
+ 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
+-	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server, quit, {0} },
++	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,Key_BackSpace, quit, {0} },
++#define CHVT(KEY,n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT, KEY, chvt, {.ui = (n)} }
+ 	/* Ctrl-Alt-Fx is used to switch to another VT, if you don't know what a VT is
+ 	 * do not remove them.
+ 	 */
+-#define CHVT(n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_XF86Switch_VT_##n, chvt, {.ui = (n)} }
+-	CHVT(1), CHVT(2), CHVT(3), CHVT(4), CHVT(5), CHVT(6),
+-	CHVT(7), CHVT(8), CHVT(9), CHVT(10), CHVT(11), CHVT(12),
++	CHVT(Key_F1, 1), CHVT(Key_F2,  2),  CHVT(Key_F3,  3),  CHVT(Key_F4,  4),
++	CHVT(Key_F5, 5), CHVT(Key_F6,  6),  CHVT(Key_F7,  7),  CHVT(Key_F8,  8),
++	CHVT(Key_F9, 9), CHVT(Key_F10, 10), CHVT(Key_F11, 11), CHVT(Key_F12, 12),
+ };
+ 
+ static const Button buttons[] = {
+diff --git a/dwl.c b/dwl.c
+index a2711f67..68860d4e 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -145,7 +145,7 @@ typedef struct {
+ 
+ typedef struct {
+ 	uint32_t mod;
+-	xkb_keysym_t keysym;
++	xkb_keycode_t keycode;
+ 	void (*func)(const Arg *);
+ 	const Arg arg;
+ } Key;
+@@ -154,9 +154,8 @@ typedef struct {
+ 	struct wl_list link;
+ 	struct wlr_keyboard_group *wlr_group;
+ 
+-	int nsyms;
+-	const xkb_keysym_t *keysyms; /* invalid if nsyms == 0 */
+-	uint32_t mods; /* invalid if nsyms == 0 */
++	xkb_keycode_t keycode;
++	uint32_t mods; /* invalid if keycode == 0 */
+ 	struct wl_event_source *key_repeat_source;
+ 
+ 	struct wl_listener modifiers;
+@@ -294,7 +293,7 @@ static void gpureset(struct wl_listener *listener, void *data);
+ static void handlesig(int signo);
+ static void incnmaster(const Arg *arg);
+ static void inputdevice(struct wl_listener *listener, void *data);
+-static int keybinding(uint32_t mods, xkb_keysym_t sym);
++static int keybinding(uint32_t mods, xkb_keycode_t keycode);
+ static void keypress(struct wl_listener *listener, void *data);
+ static void keypressmod(struct wl_listener *listener, void *data);
+ static int keyrepeat(void *data);
+@@ -1555,7 +1554,7 @@ inputdevice(struct wl_listener *listener, void *data)
+ }
+ 
+ int
+-keybinding(uint32_t mods, xkb_keysym_t sym)
++keybinding(uint32_t mods, xkb_keycode_t keycode)
+ {
+ 	/*
+ 	 * Here we handle compositor keybindings. This is when the compositor is
+@@ -1565,7 +1564,7 @@ keybinding(uint32_t mods, xkb_keysym_t sym)
+ 	const Key *k;
+ 	for (k = keys; k < END(keys); k++) {
+ 		if (CLEANMASK(mods) == CLEANMASK(k->mod)
+-				&& sym == k->keysym && k->func) {
++				&& keycode == k->keycode && k->func) {
+ 			k->func(&k->arg);
+ 			return 1;
+ 		}
+@@ -1576,17 +1575,12 @@ keybinding(uint32_t mods, xkb_keysym_t sym)
+ void
+ keypress(struct wl_listener *listener, void *data)
+ {
+-	int i;
+ 	/* This event is raised when a key is pressed or released. */
+ 	KeyboardGroup *group = wl_container_of(listener, group, key);
+ 	struct wlr_keyboard_key_event *event = data;
+ 
+ 	/* Translate libinput keycode -> xkbcommon */
+ 	uint32_t keycode = event->keycode + 8;
+-	/* Get a list of keysyms based on the keymap for this keyboard */
+-	const xkb_keysym_t *syms;
+-	int nsyms = xkb_state_key_get_syms(
+-			group->wlr_group->keyboard.xkb_state, keycode, &syms);
+ 
+ 	int handled = 0;
+ 	uint32_t mods = wlr_keyboard_get_modifiers(&group->wlr_group->keyboard);
+@@ -1595,19 +1589,16 @@ keypress(struct wl_listener *listener, void *data)
+ 
+ 	/* On _press_ if there is no active screen locker,
+ 	 * attempt to process a compositor keybinding. */
+-	if (!locked && event->state == WL_KEYBOARD_KEY_STATE_PRESSED) {
+-		for (i = 0; i < nsyms; i++)
+-			handled = keybinding(mods, syms[i]) || handled;
+-	}
++	if (!locked && event->state == WL_KEYBOARD_KEY_STATE_PRESSED)
++		handled = keybinding(mods, keycode);
+ 
+ 	if (handled && group->wlr_group->keyboard.repeat_info.delay > 0) {
+ 		group->mods = mods;
+-		group->keysyms = syms;
+-		group->nsyms = nsyms;
++		group->keycode = keycode;
+ 		wl_event_source_timer_update(group->key_repeat_source,
+ 				group->wlr_group->keyboard.repeat_info.delay);
+ 	} else {
+-		group->nsyms = 0;
++		group->keycode = 0;
+ 		wl_event_source_timer_update(group->key_repeat_source, 0);
+ 	}
+ 
+@@ -1637,15 +1628,13 @@ int
+ keyrepeat(void *data)
+ {
+ 	KeyboardGroup *group = data;
+-	int i;
+-	if (!group->nsyms || group->wlr_group->keyboard.repeat_info.rate <= 0)
++	if (!group->keycode || group->wlr_group->keyboard.repeat_info.rate <= 0)
+ 		return 0;
+ 
+ 	wl_event_source_timer_update(group->key_repeat_source,
+ 			1000 / group->wlr_group->keyboard.repeat_info.rate);
+ 
+-	for (i = 0; i < group->nsyms; i++)
+-		keybinding(group->mods, group->keysyms[i]);
++	keybinding(group->mods, group->keycode);
+ 
+ 	return 0;
+ }
+diff --git a/keys.h b/keys.h
+new file mode 100644
+index 00000000..047b76b0
+--- /dev/null
++++ b/keys.h
+@@ -0,0 +1,514 @@
++/* You can use the macros within this file
++ * instead of search the keycodes yourself
++ * with wev or something like that
++ * You probably are also searching these:
++ *    Key_XF86AudioMute
++ *    Key_XF86AudioLowerVolume
++ *    Key_XF86AudioRaiseVolume
++ *    Key_XF86MonBrightnessDown
++ *    Key_XF86MonBrightnessUp
++*/
++
++#define Key_Escape                      0x009
++#define Key_1                           0x00a
++#define Key_exclam                      0x00a
++#define Key_2                           0x00b
++#define Key_at                          0x00b
++#define Key_3                           0x00c
++#define Key_numbersign                  0x00c
++#define Key_4                           0x00d
++#define Key_dollar                      0x00d
++#define Key_5                           0x00e
++#define Key_percent                     0x00e
++#define Key_6                           0x00f
++#define Key_asciicircum                 0x00f
++#define Key_7                           0x010
++#define Key_ampersand                   0x010
++#define Key_8                           0x011
++#define Key_asterisk                    0x011
++#define Key_9                           0x012
++#define Key_parenleft                   0x012
++#define Key_0                           0x013
++#define Key_parenright                  0x013
++#define Key_minus                       0x014
++#define Key_underscore                  0x014
++#define Key_equal                       0x015
++#define Key_plus                        0x015
++#define Key_BackSpace                   0x016
++#define Key_Tab                         0x017
++#define Key_ISO_Left_Tab                0x017
++#define Key_q                           0x018
++#define Key_Q                           0x018
++#define Key_w                           0x019
++#define Key_W                           0x019
++#define Key_e                           0x01a
++#define Key_E                           0x01a
++#define Key_r                           0x01b
++#define Key_R                           0x01b
++#define Key_t                           0x01c
++#define Key_T                           0x01c
++#define Key_y                           0x01d
++#define Key_Y                           0x01d
++#define Key_u                           0x01e
++#define Key_U                           0x01e
++#define Key_i                           0x01f
++#define Key_I                           0x01f
++#define Key_o                           0x020
++#define Key_O                           0x020
++#define Key_p                           0x021
++#define Key_P                           0x021
++#define Key_bracketleft                 0x022
++#define Key_braceleft                   0x022
++#define Key_bracketright                0x023
++#define Key_braceright                  0x023
++#define Key_Return                      0x024
++#define Key_Control_L                   0x025
++#define Key_a                           0x026
++#define Key_A                           0x026
++#define Key_s                           0x027
++#define Key_S                           0x027
++#define Key_d                           0x028
++#define Key_D                           0x028
++#define Key_f                           0x029
++#define Key_F                           0x029
++#define Key_g                           0x02a
++#define Key_G                           0x02a
++#define Key_h                           0x02b
++#define Key_H                           0x02b
++#define Key_j                           0x02c
++#define Key_J                           0x02c
++#define Key_k                           0x02d
++#define Key_K                           0x02d
++#define Key_l                           0x02e
++#define Key_L                           0x02e
++#define Key_semicolon                   0x02f
++#define Key_colon                       0x02f
++#define Key_apostrophe                  0x030
++#define Key_quotedbl                    0x030
++#define Key_grave                       0x031
++#define Key_asciitilde                  0x031
++#define Key_Shift_L                     0x032
++#define Key_backslash                   0x033
++#define Key_bar                         0x033
++#define Key_z                           0x034
++#define Key_Z                           0x034
++#define Key_x                           0x035
++#define Key_X                           0x035
++#define Key_c                           0x036
++#define Key_C                           0x036
++#define Key_v                           0x037
++#define Key_V                           0x037
++#define Key_b                           0x038
++#define Key_B                           0x038
++#define Key_n                           0x039
++#define Key_N                           0x039
++#define Key_m                           0x03a
++#define Key_M                           0x03a
++#define Key_comma                       0x03b
++#define Key_less                        0x03b
++#define Key_period                      0x03c
++#define Key_greater                     0x03c
++#define Key_slash                       0x03d
++#define Key_question                    0x03d
++#define Key_Shift_R                     0x03e
++#define Key_KP_Multiply                 0x03f
++#define Key_XF86ClearGrab               0x03f
++#define Key_Alt_L                       0x040
++#define Key_Meta_L                      0x040
++#define Key_space                       0x041
++#define Key_Caps_Lock                   0x042
++#define Key_F1                          0x043
++#define Key_XF86Switch_VT_1             0x043
++#define Key_F2                          0x044
++#define Key_XF86Switch_VT_2             0x044
++#define Key_F3                          0x045
++#define Key_XF86Switch_VT_3             0x045
++#define Key_F4                          0x046
++#define Key_XF86Switch_VT_4             0x046
++#define Key_F5                          0x047
++#define Key_XF86Switch_VT_5             0x047
++#define Key_F6                          0x048
++#define Key_XF86Switch_VT_6             0x048
++#define Key_F7                          0x049
++#define Key_XF86Switch_VT_7             0x049
++#define Key_F8                          0x04a
++#define Key_XF86Switch_VT_8             0x04a
++#define Key_F9                          0x04b
++#define Key_XF86Switch_VT_9             0x04b
++#define Key_F10                         0x04c
++#define Key_XF86Switch_VT_10            0x04c
++#define Key_Num_Lock                    0x04d
++#define Key_Scroll_Lock                 0x04e
++#define Key_KP_Home                     0x04f
++#define Key_KP_7                        0x04f
++#define Key_KP_Up                       0x050
++#define Key_KP_8                        0x050
++#define Key_KP_Prior                    0x051
++#define Key_KP_9                        0x051
++#define Key_KP_Subtract                 0x052
++#define Key_XF86Prev_VMode              0x052
++#define Key_KP_Left                     0x053
++#define Key_KP_4                        0x053
++#define Key_KP_Begin                    0x054
++#define Key_KP_5                        0x054
++#define Key_KP_Right                    0x055
++#define Key_KP_6                        0x055
++#define Key_KP_Add                      0x056
++#define Key_XF86Next_VMode              0x056
++#define Key_KP_End                      0x057
++#define Key_KP_1                        0x057
++#define Key_KP_Down                     0x058
++#define Key_KP_2                        0x058
++#define Key_KP_Next                     0x059
++#define Key_KP_3                        0x059
++#define Key_KP_Insert                   0x05a
++#define Key_KP_0                        0x05a
++#define Key_KP_Delete                   0x05b
++#define Key_KP_Decimal                  0x05b
++#define Key_ISO_Level3_Shift            0x05c
++#define Key_less2                       0x05e
++#define Key_greater2                    0x05e
++#define Key_bar2                        0x05e
++#define Key_brokenbar                   0x05e
++#define Key_F11                         0x05f
++#define Key_XF86Switch_VT_11            0x05f
++#define Key_F12                         0x060
++#define Key_XF86Switch_VT_12            0x060
++#define Key_Katakana                    0x062
++#define Key_Hiragana                    0x063
++#define Key_Henkan_Mode                 0x064
++#define Key_Hiragana_Katakana           0x065
++#define Key_Muhenkan                    0x066
++#define Key_KP_Enter                    0x068
++#define Key_Control_R                   0x069
++#define Key_KP_Divide                   0x06a
++#define Key_XF86Ungrab                  0x06a
++#define Key_Print                       0x06b
++#define Key_Sys_Req                     0x06b
++#define Key_Alt_R                       0x06c
++#define Key_Meta_R                      0x06c
++#define Key_Linefeed                    0x06d
++#define Key_Home                        0x06e
++#define Key_Up                          0x06f
++#define Key_Prior                       0x070
++#define Key_Left                        0x071
++#define Key_Right                       0x072
++#define Key_End                         0x073
++#define Key_Down                        0x074
++#define Key_Next                        0x075
++#define Key_Insert                      0x076
++#define Key_Delete                      0x077
++#define Key_XF86AudioMute               0x079
++#define Key_XF86AudioLowerVolume        0x07a
++#define Key_XF86AudioRaiseVolume        0x07b
++#define Key_XF86PowerOff                0x07c
++#define Key_KP_Equal                    0x07d
++#define Key_plusminus                   0x07e
++#define Key_Pause                       0x07f
++#define Key_Break                       0x07f
++#define Key_XF86LaunchA                 0x080
++#define Key_KP_Decimal2                 0x081
++#define Key_Hangul                      0x082
++#define Key_Hangul_Hanja                0x083
++#define Key_Super_L                     0x085
++#define Key_Super_R                     0x086
++#define Key_Menu                        0x087
++#define Key_Cancel                      0x088
++#define Key_Redo                        0x089
++#define Key_SunProps                    0x08a
++#define Key_Undo                        0x08b
++#define Key_SunFront                    0x08c
++#define Key_XF86Copy                    0x08d
++#define Key_XF86Open                    0x08e
++#define Key_XF86Paste                   0x08f
++#define Key_Find                        0x090
++#define Key_XF86Cut                     0x091
++#define Key_Help                        0x092
++#define Key_XF86MenuKB                  0x093
++#define Key_XF86Calculator              0x094
++#define Key_XF86Sleep                   0x096
++#define Key_XF86WakeUp                  0x097
++#define Key_XF86Explorer                0x098
++#define Key_XF86Send                    0x099
++#define Key_XF86Xfer                    0x09b
++#define Key_XF86Launch1                 0x09c
++#define Key_XF86Launch2                 0x09d
++#define Key_XF86WWW                     0x09e
++#define Key_XF86DOS                     0x09f
++#define Key_XF86ScreenSaver             0x0a0
++#define Key_XF86RotateWindows           0x0a1
++#define Key_XF86TaskPane                0x0a2
++#define Key_XF86Mail                    0x0a3
++#define Key_XF86Favorites               0x0a4
++#define Key_XF86MyComputer              0x0a5
++#define Key_XF86Back                    0x0a6
++#define Key_XF86Forward                 0x0a7
++#define Key_XF86Eject                   0x0a9
++#define Key_XF86Eject2                  0x0aa
++#define Key_XF86AudioNext               0x0ab
++#define Key_XF86AudioPlay               0x0ac
++#define Key_XF86AudioPause              0x0ac
++#define Key_XF86AudioPrev               0x0ad
++#define Key_XF86AudioStop               0x0ae
++#define Key_XF86Eject3                  0x0ae
++#define Key_XF86AudioRecord             0x0af
++#define Key_XF86AudioRewind             0x0b0
++#define Key_XF86Phone                   0x0b1
++#define Key_XF86Tools                   0x0b3
++#define Key_XF86HomePage                0x0b4
++#define Key_XF86Reload                  0x0b5
++#define Key_XF86Close                   0x0b6
++#define Key_XF86ScrollUp                0x0b9
++#define Key_XF86ScrollDown              0x0ba
++#define Key_parenleft2                  0x0bb
++#define Key_parenright2                 0x0bc
++#define Key_XF86New                     0x0bd
++#define Key_Redo2                       0x0be
++#define Key_XF86Tools2                  0x0bf
++#define Key_XF86Launch5                 0x0c0
++#define Key_XF86Launch6                 0x0c1
++#define Key_XF86Launch7                 0x0c2
++#define Key_XF86Launch8                 0x0c3
++#define Key_XF86Launch9                 0x0c4
++#define Key_XF86AudioMicMute            0x0c6
++#define Key_XF86TouchpadToggle          0x0c7
++#define Key_XF86TouchpadOn              0x0c8
++#define Key_XF86TouchpadOff             0x0c9
++#define Key_ISO_Level5_Shift            0x0cb
++#define Key_Alt_L2                      0x0cc
++#define Key_Meta_L2                     0x0cd
++#define Key_Super_L2                    0x0ce
++#define Key_Hyper_L                     0x0cf
++#define Key_XF86AudioPlay2              0x0d0
++#define Key_XF86AudioPause2             0x0d1
++#define Key_XF86Launch3                 0x0d2
++#define Key_XF86Launch4                 0x0d3
++#define Key_XF86LaunchB                 0x0d4
++#define Key_XF86Suspend                 0x0d5
++#define Key_XF86Close2                  0x0d6
++#define Key_XF86AudioPlay3              0x0d7
++#define Key_XF86AudioForward            0x0d8
++#define Key_Print2                      0x0da
++#define Key_XF86WebCam                  0x0dc
++#define Key_XF86AudioPreset             0x0dd
++#define Key_XF86Mail2                   0x0df
++#define Key_XF86Messenger               0x0e0
++#define Key_XF86Search                  0x0e1
++#define Key_XF86Go                      0x0e2
++#define Key_XF86Finance                 0x0e3
++#define Key_XF86Game                    0x0e4
++#define Key_XF86Shop                    0x0e5
++#define Key_Cancel2                     0x0e7
++#define Key_XF86MonBrightnessDown       0x0e8
++#define Key_XF86MonBrightnessUp         0x0e9
++#define Key_XF86AudioMedia              0x0ea
++#define Key_XF86Display                 0x0eb
++#define Key_XF86KbdLightOnOff           0x0ec
++#define Key_XF86KbdBrightnessDown       0x0ed
++#define Key_XF86KbdBrightnessUp         0x0ee
++#define Key_XF86Send2                   0x0ef
++#define Key_XF86Reply                   0x0f0
++#define Key_XF86MailForward             0x0f1
++#define Key_XF86Save                    0x0f2
++#define Key_XF86Documents               0x0f3
++#define Key_XF86Battery                 0x0f4
++#define Key_XF86Bluetooth               0x0f5
++#define Key_XF86WLAN                    0x0f6
++#define Key_XF86UWB                     0x0f7
++#define Key_XF86Next_VMode2             0x0f9
++#define Key_XF86Prev_VMode2             0x0fa
++#define Key_XF86MonBrightnessCycle      0x0fb
++#define Key_XF86BrightnessAuto          0x0fc
++#define Key_XF86DisplayOff              0x0fd
++#define Key_XF86WWAN                    0x0fe
++#define Key_XF86RFKill                  0x0ff
++#define Key_XF86AudioMicMute2           0x100
++#define Key_XF86Info                    0x16e
++#define Key_XF86Favorites2              0x174
++#define Key_XF86CycleAngle              0x17b
++#define Key_XF86FullScreen              0x17c
++#define Key_XF86Keyboard                0x17e
++#define Key_XF86AspectRatio             0x17f
++#define Key_XF86DVD                     0x18d
++#define Key_XF86Audio                   0x190
++#define Key_XF86Video                   0x191
++#define Key_XF86Calendar                0x195
++#define Key_XF86ChannelUp               0x19a
++#define Key_XF86ChannelDown             0x19b
++#define Key_XF86AudioRandomPlay         0x1a2
++#define Key_XF86Break                   0x1a3
++#define Key_XF86VideoPhone              0x1a8
++#define Key_XF86Game2                   0x1a9
++#define Key_XF86ZoomIn                  0x1aa
++#define Key_XF86ZoomOut                 0x1ab
++#define Key_XF86ZoomReset               0x1ac
++#define Key_XF86Word                    0x1ad
++#define Key_XF86Editor                  0x1ae
++#define Key_XF86Excel                   0x1af
++#define Key_XF86GraphicsEditor          0x1b0
++#define Key_XF86Presentation            0x1b1
++#define Key_XF86Database                0x1b2
++#define Key_XF86News                    0x1b3
++#define Key_XF86Voicemail               0x1b4
++#define Key_XF86Addressbook             0x1b5
++#define Key_XF86Messenger2              0x1b6
++#define Key_XF86DisplayToggle           0x1b7
++#define Key_XF86SpellCheck              0x1b8
++#define Key_XF86LogOff                  0x1b9
++#define Key_dollar2                     0x1ba
++#define Key_EuroSign                    0x1bb
++#define Key_XF86FrameBack               0x1bc
++#define Key_XF86FrameForward            0x1bd
++#define Key_XF86ContextMenu             0x1be
++#define Key_XF86MediaRepeat             0x1bf
++#define Key_XF8610ChannelsUp            0x1c0
++#define Key_XF8610ChannelsDown          0x1c1
++#define Key_XF86Images                  0x1c2
++#define Key_XF86NotificationCenter      0x1c4
++#define Key_XF86PickupPhone             0x1c5
++#define Key_XF86HangupPhone             0x1c6
++#define Key_XF86Fn                      0x1d8
++#define Key_XF86Fn_Esc                  0x1d9
++#define Key_XF86FnRightShift            0x1ed
++#define Key_braille_dot_1               0x1f9
++#define Key_braille_dot_2               0x1fa
++#define Key_braille_dot_3               0x1fb
++#define Key_braille_dot_4               0x1fc
++#define Key_braille_dot_5               0x1fd
++#define Key_braille_dot_6               0x1fe
++#define Key_braille_dot_7               0x1ff
++#define Key_braille_dot_8               0x200
++#define Key_braille_dot_9               0x201
++#define Key_braille_dot_1_2             0x202
++#define Key_XF86Numeric0                0x208
++#define Key_XF86Numeric1                0x209
++#define Key_XF86Numeric2                0x20a
++#define Key_XF86Numeric3                0x20b
++#define Key_XF86Numeric4                0x20c
++#define Key_XF86Numeric5                0x20d
++#define Key_XF86Numeric6                0x20e
++#define Key_XF86Numeric7                0x20f
++#define Key_XF86Numeric8                0x210
++#define Key_XF86Numeric9                0x211
++#define Key_XF86NumericStar             0x212
++#define Key_XF86NumericPound            0x213
++#define Key_XF86NumericA                0x214
++#define Key_XF86NumericB                0x215
++#define Key_XF86NumericC                0x216
++#define Key_XF86NumericD                0x217
++#define Key_XF86CameraFocus             0x218
++#define Key_XF86WPSButton               0x219
++#define Key_XF86TouchpadToggle2         0x21a
++#define Key_XF86TouchpadOn2             0x21b
++#define Key_XF86TouchpadOff2            0x21c
++#define Key_XF86CameraZoomIn            0x21d
++#define Key_XF86CameraZoomOut           0x21e
++#define Key_XF86CameraUp                0x21f
++#define Key_XF86CameraDown              0x220
++#define Key_XF86CameraLeft              0x221
++#define Key_XF86CameraRight             0x222
++#define Key_XF86AttendantOn             0x223
++#define Key_XF86AttendantOff            0x224
++#define Key_XF86AttendantToggle         0x225
++#define Key_XF86LightsToggle            0x226
++#define Key_XF86ALSToggle               0x238
++#define Key_XF86RotationLockToggle      0x239
++#define Key_XF86Buttonconfig            0x248
++#define Key_XF86Taskmanager             0x249
++#define Key_XF86Journal                 0x24a
++#define Key_XF86ControlPanel            0x24b
++#define Key_XF86AppSelect               0x24c
++#define Key_XF86Screensaver             0x24d
++#define Key_XF86VoiceCommand            0x24e
++#define Key_XF86Assistant               0x24f
++#define Key_ISO_Next_Group              0x250
++#define Key_XF86EmojiPicker             0x251
++#define Key_XF86Dictate                 0x252
++#define Key_XF86CameraAccessEnable      0x253
++#define Key_XF86CameraAccessDisable     0x254
++#define Key_XF86CameraAccessToggle      0x255
++#define Key_XF86BrightnessMin           0x258
++#define Key_XF86BrightnessMax           0x259
++#define Key_XF86KbdInputAssistPrev      0x268
++#define Key_XF86KbdInputAssistNext      0x269
++#define Key_XF86KbdInputAssistPrevgroup 0x26a
++#define Key_XF86KbdInputAssistNextgroup 0x26b
++#define Key_XF86KbdInputAssistAccept    0x26c
++#define Key_XF86KbdInputAssistCancel    0x26d
++#define Key_XF86RightUp                 0x26e
++#define Key_XF86RightDown               0x26f
++#define Key_XF86LeftUp                  0x270
++#define Key_XF86LeftDown                0x271
++#define Key_XF86RootMenu                0x272
++#define Key_XF86MediaTopMenu            0x273
++#define Key_XF86Numeric11               0x274
++#define Key_XF86Numeric12               0x275
++#define Key_XF86AudioDesc               0x276
++#define Key_XF863DMode                  0x277
++#define Key_XF86NextFavorite            0x278
++#define Key_XF86StopRecord              0x279
++#define Key_XF86PauseRecord             0x27a
++#define Key_XF86VOD                     0x27b
++#define Key_XF86Unmute                  0x27c
++#define Key_XF86FastReverse             0x27d
++#define Key_XF86SlowReverse             0x27e
++#define Key_XF86Data                    0x27f
++#define Key_XF86OnScreenKeyboard        0x280
++#define Key_XF86PrivacyScreenToggle     0x281
++#define Key_XF86SelectiveScreenshot     0x282
++#define Key_XF86NextElement             0x283
++#define Key_XF86PreviousElement         0x284
++#define Key_XF86AutopilotEngageToggle   0x285
++#define Key_XF86MarkWaypoint            0x286
++#define Key_XF86Sos                     0x287
++#define Key_XF86NavChart                0x288
++#define Key_XF86FishingChart            0x289
++#define Key_XF86SingleRangeRadar        0x28a
++#define Key_XF86DualRangeRadar          0x28b
++#define Key_XF86RadarOverlay            0x28c
++#define Key_XF86TraditionalSonar        0x28d
++#define Key_XF86ClearvuSonar            0x28e
++#define Key_XF86SidevuSonar             0x28f
++#define Key_XF86NavInfo                 0x290
++#define Key_XF86BrightnessAdjust        0x291
++#define Key_XF86Macro1                  0x298
++#define Key_XF86Macro2                  0x299
++#define Key_XF86Macro3                  0x29a
++#define Key_XF86Macro4                  0x29b
++#define Key_XF86Macro5                  0x29c
++#define Key_XF86Macro6                  0x29d
++#define Key_XF86Macro7                  0x29e
++#define Key_XF86Macro8                  0x29f
++#define Key_XF86Macro9                  0x2a0
++#define Key_XF86Macro10                 0x2a1
++#define Key_XF86Macro11                 0x2a2
++#define Key_XF86Macro12                 0x2a3
++#define Key_XF86Macro13                 0x2a4
++#define Key_XF86Macro14                 0x2a5
++#define Key_XF86Macro15                 0x2a6
++#define Key_XF86Macro16                 0x2a7
++#define Key_XF86Macro17                 0x2a8
++#define Key_XF86Macro18                 0x2a9
++#define Key_XF86Macro19                 0x2aa
++#define Key_XF86Macro20                 0x2ab
++#define Key_XF86Macro21                 0x2ac
++#define Key_XF86Macro22                 0x2ad
++#define Key_XF86Macro23                 0x2ae
++#define Key_XF86Macro24                 0x2af
++#define Key_XF86Macro25                 0x2b0
++#define Key_XF86Macro26                 0x2b1
++#define Key_XF86Macro27                 0x2b2
++#define Key_XF86Macro28                 0x2b3
++#define Key_XF86Macro29                 0x2b4
++#define Key_XF86Macro30                 0x2b5
++#define Key_XF86MacroRecordStart        0x2b8
++#define Key_XF86MacroRecordStop         0x2b9
++#define Key_XF86MacroPresetCycle        0x2ba
++#define Key_XF86MacroPreset1            0x2bb
++#define Key_XF86MacroPreset2            0x2bc
++#define Key_XF86MacroPreset3            0x2bd
++#define Key_XF86KbdLcdMenu1             0x2c0
++#define Key_XF86KbdLcdMenu2             0x2c1
++#define Key_XF86KbdLcdMenu3             0x2c2
++#define Key_XF86KbdLcdMenu4             0x2c3
++#define Key_XF86KbdLcdMenu5             0x2c4
+-- 
+2.46.0
+
+
+From cc7d880886d91cd8d39ab31a48d03d1f745598d2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Leonardo=20Hern=C3=A1ndez=20Hern=C3=A1ndez?=
+ <leohdz172@proton.me>
+Date: Sun, 19 Mar 2023 15:50:07 -0600
+Subject: [PATCH 2/2] add program to generate keys.h
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Leonardo Hernández Hernández <leohdz172@proton.me>
+---
+ generate-keys.c | 95 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
+ create mode 100644 generate-keys.c
+
+diff --git a/generate-keys.c b/generate-keys.c
+new file mode 100644
+index 00000000..37655611
+--- /dev/null
++++ b/generate-keys.c
+@@ -0,0 +1,95 @@
++/******************************************************************
++ * Copyright 2023-2024 Leonardo Hernández Hernández
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the “Software”), to
++ * deal in the Software without restriction, including without limitation the
++ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
++ * sell copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
++ * OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
++ * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ *
++ ******************************************************************/
++
++/* cc -lxkbcommon -o generate-keys generate-keys.c */
++
++#define _DEFAULT_SOURCE
++
++#include <errno.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <inttypes.h>
++#include <unistd.h>
++
++#include <xkbcommon/xkbcommon.h>
++
++int
++main(void)
++{
++	/* Allow generate keys with a different layout and variant.
++	 * You can also use XKB_DEFAULT_* environmental variables and let this as is */
++	struct xkb_rule_names rules = {
++		0
++	};
++	struct xkb_context *context = NULL;
++	struct xkb_keymap *keymap = NULL;
++	xkb_keycode_t keycode, min_keycode, max_keycode;
++	xkb_layout_index_t layout, num_layouts;
++	xkb_level_index_t level, num_levels;
++	int i, nsyms;
++	const xkb_keysym_t *syms;
++	char keyname[64];
++	bool ok = false;
++	FILE *file = fopen("keys.h", "w");
++	if (!file) {
++		perror("Couldn't open keys.h");
++		return EXIT_FAILURE;
++	}
++
++	if (!(context = xkb_context_new(XKB_CONTEXT_NO_FLAGS))) {
++		fputs("Couldn't create xkbcommon context\n", stderr);
++		goto out;
++	}
++
++	if (!(keymap = xkb_keymap_new_from_names(context, &rules,
++			XKB_KEYMAP_COMPILE_NO_FLAGS))) {
++		fputs("Couldn't create xkbcommon keymap\n", stderr);
++		goto out;
++	}
++
++	min_keycode = xkb_keymap_min_keycode(keymap);
++	max_keycode = xkb_keymap_max_keycode(keymap);
++
++	for (keycode = min_keycode; keycode <= max_keycode; keycode++) {
++		num_layouts = xkb_keymap_num_layouts_for_key(keymap, keycode);
++		for (layout = 0; layout < num_layouts; layout++) {
++			num_levels = xkb_keymap_num_levels_for_key(keymap, keycode, layout);
++			for (level = 0; level < num_levels; level++) {
++				nsyms = xkb_keymap_key_get_syms_by_level(keymap, keycode, layout, level, &syms);
++				for (i = 0; i < nsyms; i++) {
++					xkb_keysym_get_name(syms[i], keyname, sizeof(keyname) / sizeof(keyname[0]));
++					fprintf(file, "#define Key_%-27s %#05"PRIx32"\n", keyname, keycode);
++				}
++			}
++		}
++	}
++
++	ok = true;
++	sync();
++
++out:
++	fclose(file);
++	xkb_keymap_unref(keymap);
++	xkb_context_unref(context);
++	return !ok;
++}
+-- 
+2.46.0
+

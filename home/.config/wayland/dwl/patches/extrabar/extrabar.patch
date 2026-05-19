@@ -1,0 +1,188 @@
+diff --git a/dwl.c b/dwl.c
+index 7fe9468..2614a25 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -205,6 +205,7 @@ struct Monitor {
+ 	struct wlr_output *wlr_output;
+ 	struct wlr_scene_output *scene_output;
+ 	struct wlr_scene_buffer *scene_buffer; /* bar buffer */
++	struct wlr_scene_buffer *extra_scene_buffer; /* bar buffer */
+ 	struct wlr_scene_rect *fullscreen_bg; /* See createmon() for info */
+ 	struct wl_listener frame;
+ 	struct wl_listener destroy;
+@@ -230,6 +231,7 @@ struct Monitor {
+ 	int asleep;
+ 	Drwl *drw;
+ 	Buffer *pool[2];
++	Buffer *extra_pool[2];
+ 	int lrpad;
+ };
+ 
+@@ -278,7 +280,7 @@ static void bufdestroy(struct wlr_buffer *buffer);
+ static bool bufdatabegin(struct wlr_buffer *buffer, uint32_t flags,
+ 		void **data, uint32_t *format, size_t *stride);
+ static void bufdataend(struct wlr_buffer *buffer);
+-static Buffer *bufmon(Monitor *m);
++static Buffer *bufmon(Monitor *m, Buffer **pool);
+ static void bufrelease(struct wl_listener *listener, void *data);
+ static void buttonpress(struct wl_listener *listener, void *data);
+ static void chvt(const Arg *arg);
+@@ -444,6 +446,8 @@ static struct wl_list mons;
+ static Monitor *selmon;
+ 
+ static char stext[256];
++static char stext2[256];
++static char stext3[256];
+ static struct wl_event_source *status_event_source;
+ 
+ static const struct wlr_buffer_impl buffer_impl = {
+@@ -627,6 +631,11 @@ arrangelayers(Monitor *m)
+ 		usable_area.y += topbar ? m->b.real_height : 0;
+ 	}
+ 
++	if (m->extra_scene_buffer->node.enabled) {
++		usable_area.height -= m->b.real_height;
++		usable_area.y += topbar ? 0 : m->b.real_height;
++	}
++
+ 	/* Arrange exclusive surfaces from top->bottom */
+ 	for (i = 3; i >= 0; i--)
+ 		arrangelayer(m, &m->layers[i], &usable_area, 1);
+@@ -706,23 +715,23 @@ bufdataend(struct wlr_buffer *wlr_buffer)
+ }
+ 
+ Buffer *
+-bufmon(Monitor *m)
++bufmon(Monitor *m, Buffer **pool)
+ {
+ 	size_t i;
+ 	Buffer *buf = NULL;
+ 
+ 	for (i = 0; i < LENGTH(m->pool); i++) {
+-		if (m->pool[i]) {
+-			if (m->pool[i]->busy)
++		if (pool[i]) {
++			if (pool[i]->busy)
+ 				continue;
+-			buf = m->pool[i];
++			buf = pool[i];
+ 			break;
+ 		}
+ 
+ 		buf = ecalloc(1, sizeof(Buffer) + (m->b.width * 4 * m->b.height));
+ 		buf->image = drwl_image_create(NULL, m->b.width, m->b.height, buf->data);
+ 		wlr_buffer_init(&buf->base, &buffer_impl, m->b.width, m->b.height);
+-		m->pool[i] = buf;
++		pool[i] = buf;
+ 		break;
+ 	}
+ 	if (!buf)
+@@ -1255,6 +1264,8 @@ createmon(struct wl_listener *listener, void *data)
+ 
+ 	m->scene_buffer = wlr_scene_buffer_create(layers[LyrBottom], NULL);
+ 	m->scene_buffer->point_accepts_input = baracceptsinput;
++	m->extra_scene_buffer = wlr_scene_buffer_create(layers[LyrBottom], NULL);
++	m->extra_scene_buffer->point_accepts_input = baracceptsinput;
+ 	updatebar(m);
+ 
+ 	wl_list_insert(&mons, &m->link);
+@@ -1580,7 +1591,7 @@ drawbar(Monitor *m)
+ 
+ 	if (!m->scene_buffer->node.enabled)
+ 		return;
+-	if (!(buf = bufmon(m)))
++	if (!(buf = bufmon(m, m->pool)))
+ 		return;
+ 
+ 	/* draw status first so it can be overdrawn by tags later */
+@@ -1633,13 +1644,47 @@ drawbar(Monitor *m)
+ 	wlr_buffer_unlock(&buf->base);
+ }
+ 
++void
++extrabar(Monitor *m)
++{
++	int tw = 0;
++	Buffer *buf = NULL;
++
++	/* Skip if the extra bar scene buffer is not initialized/enabled */
++	if (!m->extra_scene_buffer || !m->extra_scene_buffer->node.enabled)
++		return;
++
++	/* Inline bufmon logic for the extra pool to keep changes contained */
++	if (!(buf = bufmon(m, m->extra_pool)))
++        return;
++
++	drwl_setscheme(m->drw, colors[SchemeNorm]);
++	drwl_rect(m->drw, 0, 0, m->b.width, m->b.height, 1, 1);
++
++    drwl_setscheme(m->drw, colors[SchemeNorm]);
++    tw = TEXTW(m, stext2) - m->lrpad + 2; /* 2px right padding */
++    drwl_text(m->drw, 2, 0, tw, m->b.height, 0, stext2, 0);
++
++    tw = TEXTW(m, stext3) - m->lrpad + 2; /* 2px right padding */
++    drwl_text(m->drw, m->b.width - tw - 4, 0, tw, m->b.height, 0, stext3, 0);
++
++	wlr_scene_buffer_set_dest_size(m->extra_scene_buffer, m->b.real_width, m->b.real_height);
++	wlr_scene_node_set_position(&m->extra_scene_buffer->node, m->m.x,
++		m->m.y + (topbar ? m->m.height - m->b.real_height : 0));
++
++	wlr_scene_buffer_set_buffer(m->extra_scene_buffer, &buf->base);
++	wlr_buffer_unlock(&buf->base);
++}
++
+ void
+ drawbars(void)
+ {
+ 	Monitor *m = NULL;
+ 
+-	wl_list_for_each(m, &mons, link)
++	wl_list_for_each(m, &mons, link) {
+ 		drawbar(m);
++        extrabar(m);
++    }
+ }
+ 
+ void
+@@ -2896,7 +2941,7 @@ startdrag(struct wl_listener *listener, void *data)
+ int
+ statusin(int fd, unsigned int mask, void *data)
+ {
+-	char status[256];
++	char status[3*256];
+ 	ssize_t n;
+ 
+ 	if (mask & WL_EVENT_ERROR)
+@@ -2911,7 +2956,18 @@ statusin(int fd, unsigned int mask, void *data)
+ 	status[n] = '\0';
+ 	status[strcspn(status, "\n")] = '\0';
+ 
+-	strncpy(stext, status, sizeof(stext));
++    char *l1 = strchr(status, ';');
++    if (l1) {
++        *l1 = '\0';
++        char *l2 = strchr(++l1, ';');
++        if (l2) {
++            *l2 = '\0';
++            strncpy(stext3, ++l2, sizeof(stext3));
++        }
++        strncpy(stext2, l1, sizeof(stext2));
++    }
++    strncpy(stext, status, sizeof(stext));
++
+ 	drawbars();
+ 
+ 	return 0;
+@@ -3206,6 +3262,12 @@ updatebar(Monitor *m)
+ 			m->pool[i] = NULL;
+ 		}
+ 
++	for (i = 0; i < LENGTH(m->extra_pool); i++)
++		if (m->extra_pool[i]) {
++			wlr_buffer_drop(&m->extra_pool[i]->base);
++			m->extra_pool[i] = NULL;
++		}
++
+ 	if (m->b.scale == m->wlr_output->scale && m->drw)
+ 		return;
+ 

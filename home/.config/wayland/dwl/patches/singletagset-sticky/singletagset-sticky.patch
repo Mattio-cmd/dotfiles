@@ -1,0 +1,27 @@
+From a37d65c8601a7c5b03c53bb99956da8a24952628 Mon Sep 17 00:00:00 2001
+From: Rutherther <rutherther@proton.me>
+Date: Fri, 19 Jul 2024 16:51:26 +0200
+Subject: [PATCH] singletagset-sticky
+
+---
+ dwl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/dwl.c b/dwl.c
+index 59e56bd..fbbdff9 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -73,8 +73,8 @@
+ #define MAX(A, B)               ((A) > (B) ? (A) : (B))
+ #define MIN(A, B)               ((A) < (B) ? (A) : (B))
+ #define CLEANMASK(mask)         (mask & ~WLR_MODIFIER_CAPS)
+-#define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && (((C)->tags & (M)->tagset[(M)->seltags])) || (C)->issticky)
+-#define SVISIBLEON(C, M)        ((M) && (C)->mon && ((C)->tags & (M)->tagset[(M)->seltags]))
++#define VISIBLEON(C, M)         ((M) && (C)->mon == (M) && ((((C)->tags & (M)->tagset[(M)->seltags])) || (C)->issticky))
++#define SVISIBLEON(C, M)        ((M) && (C)->mon && (((C)->tags & (M)->tagset[(M)->seltags]) && !(C)->issticky) || ((C)->issticky && (C)->mon == (M)))
+ #define LENGTH(X)               (sizeof X / sizeof X[0])
+ #define END(A)                  ((A) + LENGTH(A))
+ #define TAGMASK                 ((1u << TAGCOUNT) - 1)
+-- 
+2.45.2
+

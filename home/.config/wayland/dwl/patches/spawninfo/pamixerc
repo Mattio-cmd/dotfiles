@@ -1,0 +1,134 @@
+#!/usr/bin/awk -f
+
+function get_parent(pid,   cmd, ppid, arr) {
+	cmd = sprintf("/proc/%d/stat", pid)
+	ppid = ""
+	if ((getline line < cmd) > 0) {
+		split(line, arr)
+		ppid = arr[4]
+	}
+	close(cmd)
+	return ppid
+}
+
+function proc_clients(line,   arr) {
+	if (match(line, /^Client #(.*)/, arr)) {
+		store_client()
+		client_index = arr[1]
+		return
+	}
+	else if (match(line, /^\s*application\.process\.id = "(.*)"/, arr)) {
+		process_id = arr[1]
+		return
+	}
+	else if (match(line, /^\s*application\.name = "(.*)"/, arr)) {
+		application_name = arr[1]
+		return
+	}
+}
+
+function store_client() {
+	if (client_index == "")
+		return
+
+	clients[client_index] = 1
+	clients[client_index, "pid"] = process_id
+	clients[client_index, "parent_pid"] = get_parent(process_id)
+	clients[client_index, "name"] = application_name
+	client_index = ""
+	process_id = ""
+}
+
+function proc_sink_inputs(line,   arr) {
+	if (match(line, /^Sink Input #(.*)/, arr)) {
+		apply_sink_input()
+		sink_index = arr[1]
+		return
+	}
+	else if (match(line, /^\s*application\.process\.id = "(.*)"/, arr)) {
+		process_id = arr[1]
+		return
+	}
+	else if (match(line, /^\s*Client: (.*)/, arr)) {
+		client_index = arr[1]
+		return
+	}
+	else if (match(line, /^\s*Mute: (.*)/, arr)) {
+		muted = (arr[1] == "yes")
+		return
+	}
+	else if (match(line, /^\s*Volume:.* ([0-9]+)%/, arr)) {
+		volume = strtonum(arr[1])
+		return
+	}
+}
+
+function apply_sink_input(   cmd, header, msg, inc) {
+	if (sink_index == "")
+		return
+
+	# Do stuff if PID matches
+	if (PID == clients[client_index, "pid"] || PID == clients[client_index, "parent_pid"]) {
+		switch (ACTION) {
+			case "-i":
+			case "-d":
+				inc = strtonum(ARG)
+				if (ACTION == "-i")
+					volume += inc
+				else
+					volume -= inc
+				volume = volume > 100 ? 100 : volume
+				volume = volume < 0   ? 0   : volume
+				cmd = sprintf("pactl set-sink-input-volume '%d' '%d'%", sink_index, volume)
+				system(cmd)
+                print cmd
+				break
+			case "-t":
+				muted = !muted
+				cmd = sprintf("pactl set-sink-input-mute '%d' '%s'", sink_index, muted ? "true" : "false")
+				system(cmd)
+				print cmd
+				break
+		}
+		# Display a "popup" with new volume
+		header = sprintf("Client Volume: %d%%%s", volume, muted ? " MUTED" : "")
+		msg = clients[client_index, "name"]
+		system(sprintf("notify-send -r 101 -u low -h 'int:value:%d' '%s' '%s'", volume, header, msg))
+	}
+
+	sink_index = ""
+}
+
+BEGIN {
+	# Get arguments
+	# ACTION: -d, -i or -t (like pamixer)
+	# ARG:    num arg for -d or -i
+	ACTION = ARGV[1]
+	ARG    = ARGV[2]
+	for (i = 1; i < ARGC; i++)
+		delete ARGV[i]
+
+	# Get client info
+	getline PID
+	getline TITLE     # Not used
+	getline APPID     # Not used
+	getline TAGS      # Not used
+	getline GEOMETRY  # Not used
+
+	if (PID == "")
+		exit 1
+
+	# Process PulseAudio clients list and store PIDs for each
+	cmd = "pactl list clients"
+	while ((cmd | getline line) > 0)
+		proc_clients(line)
+	close(cmd)
+	store_client()
+
+	# Process PulseAudio sink inputs list and run apply_sink_input() for each
+	cmd = "pactl list sink-inputs"
+	while ((cmd | getline line) > 0)
+		proc_sink_inputs(line)
+	close(cmd)
+	apply_sink_input()
+}

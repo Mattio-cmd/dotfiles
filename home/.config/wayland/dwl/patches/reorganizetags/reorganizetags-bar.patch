@@ -1,0 +1,93 @@
+From ec0ff716f4096e8552c0d142e41a36468c65ed1d Mon Sep 17 00:00:00 2001
+From: zoigmant <zoigmant@noreply.codeberg.org>
+Date: Sun, 29 Mar 2026 18:08:04 -0700
+Subject: [PATCH] [PATCH] reorganize tags patch. Mostly imported from dwm.
+ Allows the users to move occupied tags as far left as possible. Patched to
+ accomodate the bar patch
+
+---
+ config.def.h |  1 +
+ dwl.c        | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
+
+diff --git a/config.def.h b/config.def.h
+index 7da50d2..70c36dd 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -136,6 +136,7 @@ static const Key keys[] = {
+ 	{ MODKEY,                    XKB_KEY_d,           incnmaster,       {.i = -1} },
+ 	{ MODKEY,                    XKB_KEY_h,           setmfact,         {.f = -0.05f} },
+ 	{ MODKEY,                    XKB_KEY_l,           setmfact,         {.f = +0.05f} },
++	{ MODKEY,                    XKB_KEY_r,           reorganizetags,   {0} },
+ 	{ MODKEY,                    XKB_KEY_Return,      zoom,             {0} },
+ 	{ MODKEY,                    XKB_KEY_Tab,         view,             {0} },
+ 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_c,           killclient,       {0} },
+diff --git a/dwl.c b/dwl.c
+index 7b2abf5..4d80bd6 100644
+--- a/dwl.c
++++ b/dwl.c
+@@ -346,6 +346,7 @@ static void pointerfocus(Client *c, struct wlr_surface *surface,
+ 		double sx, double sy, uint32_t time);
+ static void powermgrsetmode(struct wl_listener *listener, void *data);
+ static void quit(const Arg *arg);
++static void reorganizetags(const Arg *arg);
+ static void rendermon(struct wl_listener *listener, void *data);
+ static void requestdecorationmode(struct wl_listener *listener, void *data);
+ static void requeststartdrag(struct wl_listener *listener, void *data);
+@@ -2405,6 +2406,53 @@ requestmonstate(struct wl_listener *listener, void *data)
+ 	updatemons(NULL, NULL);
+ }
+ 
++void
++reorganizetags(const Arg *arg) {
++	Client *c;
++	unsigned int occ, unocc, i;
++	unsigned int tagdest[LENGTH(tags)];
++	for (i = 0; i < LENGTH(tags); i++)
++		tagdest[i] = 0; /* so no uninitialized memory warning */
++
++	occ = 0;
++	wl_list_for_each(c, &clients, link) {
++		if ((c->mon == selmon) && c->tags) {
++			for(i = 0;; i++) { /* because no ffs() in this C standard */
++				if ((c->tags) & (1 << i)) {
++					occ |= (1 << i);
++					break;
++				}
++			}
++		}
++	}
++	unocc = 0;
++	for (i = 0; i < LENGTH(tags); ++i) {
++		while (unocc < i && (occ & (1 << unocc)))
++			unocc++;
++		if (occ & (1 << i)) {
++			tagdest[i] = unocc;
++			occ &= ~(1 << i);
++			occ |= 1 << unocc;
++		}
++	}
++
++	wl_list_for_each(c, &clients, link) {
++		if ((c->mon == selmon) && c->tags) {
++			for(i = 0;; i++) {
++				if ((c->tags) & (1 << i)) {
++					c->tags = 1 << tagdest[i];
++					break;
++				}
++			}
++		}
++	}
++	if (focustop(selmon))
++		selmon->tagset[selmon->seltags] = focustop(selmon)->tags;
++	focusclient(focustop(selmon), 1);
++	drawbars();
++	arrange(selmon);
++}
++
+ void
+ resize(Client *c, struct wlr_box geo, int interact)
+ {
+-- 
+2.52.0
+
